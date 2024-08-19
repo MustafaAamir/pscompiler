@@ -1,0 +1,5 @@
+DECLARE iterator : INTEGER
+
+FOR iterator <- 1 TO 10
+    OUTPUT iterator
+NEXT iterator

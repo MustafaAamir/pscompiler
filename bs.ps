@@ -1,0 +1,20 @@
+DECLARE length, i, j, tmp : INTEGER
+
+length <- 1000
+
+DECLARE Unsorted : ARRAY[1:length] OF INTEGER
+
+FOR i <- 1 TO length
+    Unsorted[i] <- 100- - i
+NEXT i
+
+FOR i <- 1 TO length - 1
+    FOR j <- 1 TO length - i
+        IF Unsorted[j] > Unsorted[j + 1] THEN
+            tmp <- Unsorted[j]
+            Unsorted[j] <- Unsorted[j + 1]
+            Unsorted[j + 1] <- tmp
+        ENDIF
+    NEXT j
+NEXT i
+
