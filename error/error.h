@@ -5,6 +5,7 @@
 #include <exception>
 #include <stdexcept>
 #include <optional>
+#include <unordered_map>
 
 enum AnsiCode {
     FG_BLACK    = 30,
@@ -24,20 +25,27 @@ enum AnsiCode {
     FG_BWHITE   = 97
 };
 
+
 class Modifier {
     AnsiCode code;
 public:
+    const bool gui = false;
     Modifier(AnsiCode pCode) : code(pCode) {}
     friend std::ostream& operator<<(std::ostream& os, const Modifier& mod) {
+        if (mod.gui) {
+            return os;
+        }
         return os << "\033[" << mod.code << "m";
     }
 };
 
 class ErrorReporter {
     public:
-        const bool logging = true;
+        ErrorReporter() = default;
+        const bool logging = false;
         void logger(const char *func, const std::string msg, int indentation, std::optional<Token> optToken = std::nullopt);
         void report(const Token &token, const std::string category, const std::string message);
         void report(int line, int column, const std::string category, const std::string message);
         void report(std::pair<int, int> currentPosition, const std::string category, const std::string message);
 };
+

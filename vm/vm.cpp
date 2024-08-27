@@ -42,6 +42,112 @@ inline void VirtualMachine::LogicalBinOp(Value v1, Value v2, char op) {
     }
 }
 
+inline void VirtualMachine::Builtin() {
+    char name = get<char>(pop());
+    if (name == 's') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back(std::sin(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back(std::sin(get<double>(pop())));
+        } else {
+            stringstream ss;
+            ss << "use of unary operator 'Sin' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+       }
+        return;
+    } else if (name == 'c') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back(std::cos(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back(std::cos(get<double>(pop())));
+       } else {
+            stringstream ss;
+            ss << "use of unary operator 'Cos' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+       }
+       return;
+    } else if (name == 't') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back(std::tan(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back(std::tan(get<double>(pop())));
+       } else {
+            stringstream ss;
+            ss << "use of unary operator 'Tan' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+       }
+    } else if (name == 'q') {
+        if (isType<i64>(valueStack.back())) {
+            if (get<i64>(valueStack.back()) < 0) {
+                stringstream ss;
+                ss << "use of unary operator 'Sqrt' on negative value'"  << valueStack.back() << "' is not allowed";
+                Error.report(position, "Runtime", ss.str());
+            }
+            valueStack.push_back(std::sqrt(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            if (get<i64>(valueStack.back()) < 0) {
+                stringstream ss;
+                ss << "use of unary operator 'Sqrt' on negative value'"  << valueStack.back() << "' is not allowed";
+                Error.report(position, "Runtime", ss.str());
+            }
+            valueStack.push_back(std::sqrt(get<double>(pop())));
+       } else {
+            stringstream ss;
+            ss << "use of unary operator 'Sqrt' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+       }
+       return;
+    } else if (name == 'a') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back(std::abs(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back(std::abs(get<double>(pop())));
+       } else {
+            stringstream ss;
+            ss << "use of unary operator 'Abs' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+       }
+       return;
+    } else if (name == 'i') {
+        if (isType<i64>(valueStack.back())) {
+            return;
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back((i64)get<double>(pop()));
+        } else {
+            stringstream ss;
+            ss << "use of Cast 'INT()' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+        }
+        return;
+    } else if (name == 'r') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back((double)get<i64>(pop()));
+        } else if (isType<double>(valueStack.back())) {
+            return;
+        } else {
+            stringstream ss;
+            ss << "use of Cast 'REAL()' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+        }
+        return;
+     } else if (name == 'g') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back(std::to_string(get<i64>(pop())));
+        } else if (isType<double>(valueStack.back())) {
+            valueStack.push_back(std::to_string(get<double>(pop())));
+        } else if (isType<char>(valueStack.back())) {
+            valueStack.push_back((string(1, get<char>(pop()))));
+        } else if (isType<string>(valueStack.back())) {
+            return;
+        } else {
+            stringstream ss;
+            ss << "use of Cast 'STRING()' on '"  << valueStack.back() << "' is not allowed";
+            Error.report(position, "Runtime", ss.str());
+        }
+        return;
+     }
+}
+
 inline void VirtualMachine::BinOp(Value v1, Value v2, char op) {
     if (isType<i64>(v1) && isType<i64>(v2)) {
         const auto rightOperand = get<i64>(pop());
@@ -103,7 +209,9 @@ inline void VirtualMachine::Concatenate(Value v1, Value v2) {
             leftOperand.push_back(rightOperand);
             valueStack.push_back(leftOperand);
         }
+
     }
+
     return;
 }
 
@@ -113,6 +221,10 @@ void VirtualMachine::run() {
         const auto opCode = static_cast<OpCode>(chunk->read(offset++));
         printValueStack(opCode);
         switch (opCode) {
+            case (OpCode::Builtin): {
+                Builtin();
+                break;
+                                    }
             case (OpCode::Constant): {
                 const auto idx = static_cast<uint16_t>(chunk->read(offset++));
                 const auto idx1 = static_cast<uint16_t>(chunk->read(offset++));
@@ -421,11 +533,14 @@ void VirtualMachine::run() {
                 break;
                                     }
 
+
             case (OpCode::LesserEqual): {
                 if (isNumber(valueStack.back()) && isNumber(valueStack.crbegin()[1])) {
                     const auto rightOperand = pop();
                     valueStack.back() = valueStack.back() <= rightOperand;
                 } else if (isType<char>(valueStack.back()) && isType<char>(valueStack.crbegin()[1])) {
+
+
                     const auto rightOperand = get<char>(pop());
                     valueStack.back() = get<char>(valueStack.back()) <= rightOperand;
                 } else {

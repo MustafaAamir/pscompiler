@@ -7,7 +7,8 @@
 
 class Lexer {
 private:
-    ErrorReporter Error;
+    ErrorReporter Error {};
+    const bool lower = true;
     const string *input;
     vector<std::unique_ptr<struct Token>> TokenList;
     char currentChar;
@@ -21,10 +22,11 @@ private:
     void makeString();
     char nextNChar(size_t n);
     static const unordered_map<string, TokenType> keywords;
+    static const unordered_map<string, TokenType> lowerkeywords;
     static const unordered_map<string, TokenType> symbols;
 public:
-    Lexer() = default;
     Lexer(string *input);
+    Lexer() = default;
     void initLexer(string *_input);
     const vector<Token*> makeTokens(bool print);
 };

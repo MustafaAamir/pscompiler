@@ -40,7 +40,6 @@ void ErrorReporter::logger(const char *func, const std::string msg, int indentat
         }
         std::cout << Modifier(AnsiCode::FG_DEFAULT) << std::endl;
     }
-
     return;
 }
 

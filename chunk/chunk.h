@@ -22,6 +22,7 @@
     Subtract, Divide, Multiply, Negate, Mod, Div, Concatenate,
 
     And, Or, Not, Output, Input, Jump, JumpNE, Loop,
+    Builtin,
 
     Call, EndFunction,
     IncrementGlobal, Return
@@ -63,6 +64,7 @@ static const std::unordered_map<OpCode, std::string> OpCodeMap = {
     {OpCode::Multiply, "Multiply"},
     {OpCode::Negate, "Negate"},
     {OpCode::Mod, "Mod"},
+    {OpCode::Builtin, "Builtin"},
     {OpCode::Div, "Div"},
     {OpCode::Concatenate, "Concatenate"},
     {OpCode::Not, "Not"},
@@ -75,9 +77,9 @@ static const std::unordered_map<OpCode, std::string> OpCodeMap = {
     {OpCode::JumpNE, "JumpNE"},
     {OpCode::Call, "Call"},
     {OpCode::EndFunction, "EndFunction"},
-    {OpCode::Loop, "Loop"},
     {OpCode::Return, "Return"},
 };
+
 
 class Chunk {
     private:

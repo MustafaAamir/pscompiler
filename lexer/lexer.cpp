@@ -31,7 +31,88 @@ const unordered_map<string, TokenType> Lexer::symbols = {
     {"\n", TokenType::Newline},
 };
 
+const unordered_map<string, TokenType> Lexer::lowerkeywords = {
+    {"sin", TokenType::Sin},
+    {"cos", TokenType::Cos},
+    {"tan", TokenType::Tan},
+    {"sqrt", TokenType::Sqrt},
+    {"abs", TokenType::Abs},
+    {"integer_cast", TokenType::IntCast},
+    {"string_cast", TokenType::StringCast},
+    {"real_cast", TokenType::RealCast},
+    {"declare", TokenType::Declare},
+    {"constant", TokenType::Constant},
+    {"case", TokenType::Case},
+    {"of", TokenType::Of},
+    {"otherwise", TokenType::Otherwise},
+    {"endcase", TokenType::Endcase},
+    {"integer", TokenType::Integer_t},
+    {"real", TokenType::Real_t},
+    {"boolean", TokenType::Boolean_t},
+    {"char", TokenType::Char_t},
+    {"string", TokenType::String_t},
+    {"date", TokenType::Date_t},
+    {"true", TokenType::True},
+    {"false", TokenType::False},
+    {"div",    TokenType::Div},
+    {"mod",   TokenType::Mod},
+    {"type", TokenType::Type},
+    {"endtype", TokenType::Endtype},
+    {"for", TokenType::For},
+    {"to", TokenType::To},
+    {"step", TokenType::Step},
+    {"next", TokenType::Next},
+    {"if", TokenType::If},
+    {"then", TokenType::Then},
+    {"else", TokenType::Else},
+    {"endif", TokenType::Endif},
+    {"while", TokenType::While},
+    {"do", TokenType::Do},
+    {"endwhile", TokenType::Endwhile},
+    {"array", TokenType::Array},
+    {"repeat", TokenType::Repeat},
+    {"until", TokenType::Until},
+    {"break", TokenType::Break},
+    {"continue", TokenType::Continue},
+    {"procedure", TokenType::Procedure},
+    {"byref", TokenType::Byref},
+    {"byval", TokenType::Byval},
+    {"endprocedure", TokenType::Endprocedure},
+    {"call", TokenType::Call},
+    {"function", TokenType::Function},
+    {"returns", TokenType::Returns},
+    {"return", TokenType::Return},
+    {"endfunction", TokenType::Endfunction},
+    {"output", TokenType::Output},
+    {"print", TokenType::Output},
+    {"input", TokenType::Input},
+    {"openfile", TokenType::Openfile},
+    {"readfile", TokenType::Readfile},
+    {"writefile", TokenType::Writefile},
+    {"closefile", TokenType::Closefile},
+    {"read", TokenType::Read},
+    {"write", TokenType::Write},
+    {"append", TokenType::Append},
+    {"random", TokenType::Random},
+    {"seek", TokenType::Seek},
+    {"getrecord", TokenType::Getrecord},
+    {"putrecord", TokenType::Putrecord},
+    {"and", TokenType::And},
+    {"or", TokenType::Or},
+    {"not", TokenType::Not},
+};
+
+
+
 const unordered_map<string, TokenType> Lexer::keywords = {
+    {"SIN", TokenType::Sin},
+    {"COS", TokenType::Cos},
+    {"TAN", TokenType::Tan},
+    {"SQRT", TokenType::Sqrt},
+    {"ABS", TokenType::Abs},
+    {"INTEGER_CAST", TokenType::IntCast},
+    {"STRING_CAST", TokenType::StringCast},
+    {"REAL_CAST", TokenType::RealCast},
     {"DECLARE", TokenType::Declare},
     {"CONSTANT", TokenType::Constant},
     {"CASE", TokenType::Case},
@@ -200,8 +281,14 @@ void Lexer::makeWord() {
       }
   }
   string word = input->substr(startIdx, idx - startIdx);
-  unordered_map<string, TokenType>::const_iterator it = Lexer::keywords.find(word);
-  if (it == Lexer::keywords.end()) {
+  unordered_map<string, TokenType> keyw;
+  if (lower) {
+      keyw = Lexer::lowerkeywords;
+  } else {
+      keyw = Lexer::keywords;
+  }
+  unordered_map<string, TokenType>::const_iterator it = keyw.find(word);
+  if (it == keyw.end()) {
       TokenList.emplace_back(new Token(TokenType::Identifier, line, startColumn, word));
   } else {
       if (it->second == TokenType::True) {

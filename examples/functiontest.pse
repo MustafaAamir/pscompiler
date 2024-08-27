@@ -1,0 +1,20 @@
+declare a, i : integer
+a <- 10
+
+procedure increment_a()
+    a <- a + 1
+endprocedure
+
+procedure twincrement_a()
+    a <- a + 2
+    call increment_a()
+endprocedure
+
+
+a <- 0
+call twincrement_a()
+output a
+
+
+
+

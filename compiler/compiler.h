@@ -36,7 +36,7 @@ typedef struct Identifier {
 
 class Compiler {
     private:
-        ErrorReporter Error;
+        ErrorReporter Error {};
         bool panicMode;
         void increment(Value literal, i64 value, OpCode opGet, OpCode opSet);
         void andJump();

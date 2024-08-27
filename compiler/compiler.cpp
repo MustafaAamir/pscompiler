@@ -10,6 +10,14 @@ bool Compiler::lookupUnary(TokenType type) {
     switch (type) {
         case TokenType::Minus       :unary(); break;
         case TokenType::Not         :unary(); break;
+        case TokenType::Sin         :unary(); break;
+        case TokenType::Cos         :unary(); break;
+        case TokenType::Tan         :unary(); break;
+        case TokenType::Sqrt        :unary(); break;
+        case TokenType::Abs         :unary(); break;
+        case TokenType::IntCast     :unary(); break;
+        case TokenType::RealCast    :unary(); break;
+        case TokenType::StringCast  :unary(); break;
         case TokenType::Integer     :value(); break;
         case TokenType::String      :value(); break;
         case TokenType::Real        :value(); break;
@@ -437,7 +445,40 @@ void Compiler::unary() {
             emit(OpCode::Negate); break;
         case TokenType::Not:
             emit(OpCode::Not); break;
-        default: return;
+
+        case TokenType::Sin:
+            emitConstant('s');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::Cos:
+            emitConstant('c');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::Tan:
+            emitConstant('t');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::Abs:
+            emitConstant('a');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::Sqrt:
+            emitConstant('q');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::IntCast:
+            emitConstant('i');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::RealCast:
+            emitConstant('r');
+            emit(OpCode::Builtin);
+            break;
+         case TokenType::StringCast:
+            emitConstant('g');
+            emit(OpCode::Builtin);
+            break;
+       default: return;
     }
 }
 
@@ -662,6 +703,14 @@ const std::unordered_map<TokenType, Precedence> Compiler::precedenceMap = {
     {TokenType::And, Precedence::And},
     {TokenType::Or, Precedence::Or},
     {TokenType::Not, Precedence::Unary},
+    {TokenType::Sin, Precedence::Unary},
+    {TokenType::Cos, Precedence::Unary},
+    {TokenType::Tan, Precedence::Unary},
+    {TokenType::Abs, Precedence::Unary},
+    {TokenType::Sqrt, Precedence::Unary},
+    {TokenType::IntCast, Precedence::Unary},
+    {TokenType::RealCast, Precedence::Unary},
+    {TokenType::StringCast, Precedence::Unary},
 
     {TokenType::Identifier, Precedence::None},
 

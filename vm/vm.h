@@ -35,13 +35,14 @@ class VirtualMachine {
         void interpret(string input, int line);
         vector<Value> valueStack {};
     private:
+        ErrorReporter Error;
         uint8_t reg {0};
         void printValueStack(OpCode opCode);
         int line;
-        ErrorReporter Error {};
         Compiler compiler {};
         void run();
         inline Value pop();
+        inline void Builtin();
         inline bool isNumber(Value v);
         inline void BinOp(Value v1, Value v2, char op);
         inline void LogicalBinOp(Value v1, Value v2, char op);
@@ -55,6 +56,7 @@ class VirtualMachine {
         unordered_map<string, std::unique_ptr<Function>> FunctionMap;
         size_t offset {0};
 };
+
 
 
 
