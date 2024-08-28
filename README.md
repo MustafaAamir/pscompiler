@@ -72,12 +72,12 @@ else
     (Statement)*
 endif
 ```
-- Count-controlled loop  `FOR...TO...NEXT`
+- Count-controlled loop  `for...to...next`
 ```
 declare <Identifier> : integer
 for <Identifier> <- <expression> to <expression>
   (Statement)*
-NEXT <Identifier>
+next <Identifier>
 ```
 - Pre-condition loop `while...do...endwhile`
 ```
@@ -95,12 +95,12 @@ until <Condition>
 - type-convertions `integer_cast, real_cast, string_cast`
 ```
 integer_cast(<integer> | <real>) -> integer
-real_cast(<integer> | <real>) -> real
+real_cast(<integer>   | <real>) -> real
 string_cast(<integer> | <real> | <char> | <string>) -> string
 ```
 - 1-D Arrays
 ```
-declare <Identifier> : array[<lb:ub>] of <DataType>
+declare <Identifier> : array[<lb>:<ub>] of <DataType>
 ```
 - non-parameterized procedures (experimental)
 ```
