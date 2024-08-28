@@ -134,6 +134,30 @@ integer_cast(<real> | <integer>) -> integer
 real_cast(<real> | <integer>) -> real
 string_cast(<string> | <char> | <real> | <integer>) -> string
 ```
+- builtin functions with a single argument can be used without parentheses:
+```
+> output sin 1
+Output: 0.84147
+
+-- in aggregate
+> output sin cos tan sqrt abs length mid("Hello, World!", 0, 5)
+Output: 0.287797
+
+-- is equivalent to
+> output sin(cos(tan(sqrt(abs(length(mid("Hello, World!")))))))
+Output: 0.287797
+```
+- However, parentheses are required for builtins with expression arguments:
+```
+> output sin 1 + 1
+Output: 1.84147
+
+> output sin(1) + 1
+Output: 1.84147
+
+> output sin(1 + 1)
+Output: 0.909297
+```
 
 
 # Pending features
