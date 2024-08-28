@@ -2,9 +2,7 @@
 
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QTextEdit
-import regex as re
 from PyQt6.QtGui import QColor, QPalette
-from PyQt6.QtCore import Qt
 import subprocess
 import tempfile
 

@@ -8,7 +8,7 @@
 class Lexer {
 private:
     ErrorReporter Error {};
-    const bool lower = true;
+    const bool lowercase = false;
     const string *input;
     vector<std::unique_ptr<struct Token>> TokenList;
     char currentChar;
