@@ -34,12 +34,17 @@ typedef struct Identifier {
     Identifier(std::string name, int depth) : name(name), depth(depth) {};
 } Identifier;
 
+enum builtintype : char {
+    Sin, Cos, Tan, Abs, Sqrt, RandomInt, RandomReal, Length, Mid, IntegerCast,
+    StringCast, RealCast, Reverse
+};
 class Compiler {
     private:
         ErrorReporter Error {};
         bool panicMode;
         void increment(Value literal, i64 value, OpCode opGet, OpCode opSet);
         void parseMidStatement();
+        void parseRandomStatement(bool isreal);
         void andJump();
         void beginScope();
         size_t emitJump(OpCode opCode);

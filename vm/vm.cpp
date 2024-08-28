@@ -2,6 +2,7 @@
 #include "../common.h"
 #include <variant>
 #include <algorithm>
+#include <random>
 
 inline bool VirtualMachine::isNumber(Value v) {
     return (holds_alternative<double>(v) || holds_alternative<i64> (v));
@@ -45,7 +46,7 @@ inline void VirtualMachine::LogicalBinOp(Value v1, Value v2, char op) {
 
 inline void VirtualMachine::Builtin() {
     char name = get<char>(pop());
-    if (name == 'm') {
+    if (name == builtintype::Mid) {
         i64 len, startpos;
         string str;
         if (isType<i64>(valueStack.back())) {
@@ -68,16 +69,16 @@ inline void VirtualMachine::Builtin() {
         }
         valueStack.push_back(str.substr(startpos, len));
         return;
-    } else if (name == 'v') {
+    } else if (name == builtintype::Reverse) {
         if (isType<string>(valueStack.back())) {
             string name = get<string>(pop());
             std::reverse(name.begin(), name.end());
             valueStack.push_back(name);
         } else {
-            Error.report(position, "Runtime", "Invalid arguments to LENGTH(<STRING>)");
+            Error.report(position, "Runtime", "Invalid arguments to Reverse(<STRING>)");
         }
         return;
-    } else if (name == 'l') {
+    } else if (name == builtintype::Length) {
         if (isType<string>(valueStack.back())) {
             string name = get<string>(pop());
             valueStack.push_back((i64)name.length());
@@ -87,7 +88,7 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", "Invalid argument to 'LENGTH' function. LENGTH takes an orgument of type CHAR or STRING");
         }
         return;
-    } else if (name == 's') {
+    } else if (name == builtintype::Sin) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back((double)std::sin(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
@@ -98,7 +99,7 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
        }
         return;
-    } else if (name == 'c') {
+    } else if (name == builtintype::Cos) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back((double)std::cos(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
@@ -109,7 +110,7 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
        }
        return;
-    } else if (name == 't') {
+    } else if (name == builtintype::Tan) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back((double)std::tan(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
@@ -119,7 +120,7 @@ inline void VirtualMachine::Builtin() {
             ss << "use of unary operator 'Tan' on '"  << valueStack.back() << "' is not allowed";
             Error.report(position, "Runtime", ss.str());
        }
-    } else if (name == 'q') {
+    } else if (name == builtintype::Sqrt) {
         if (isType<i64>(valueStack.back())) {
             if (get<i64>(valueStack.back()) < 0) {
                 stringstream ss;
@@ -140,7 +141,7 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
        }
        return;
-    } else if (name == 'a') {
+    } else if (name == builtintype::Abs) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back(std::abs(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
@@ -151,18 +152,18 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
        }
        return;
-    } else if (name == 'i') {
+    } else if (name == builtintype::IntegerCast) {
         if (isType<i64>(valueStack.back())) {
             return;
         } else if (isType<double>(valueStack.back())) {
             valueStack.push_back((i64)get<double>(pop()));
         } else {
             stringstream ss;
-            ss << "use of Cast 'INT()' on '"  << valueStack.back() << "' is not allowed";
+            ss << "use of Cast 'integer_cast' on '"  << valueStack.back() << "' is not allowed";
             Error.report(position, "Runtime", ss.str());
         }
         return;
-    } else if (name == 'r') {
+    } else if (name == builtintype::RealCast) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back((double)get<i64>(pop()));
         } else if (isType<double>(valueStack.back())) {
@@ -173,7 +174,7 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
         }
         return;
-     } else if (name == 'g') {
+     } else if (name == builtintype::StringCast) {
         if (isType<i64>(valueStack.back())) {
             valueStack.push_back(std::to_string(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
@@ -188,8 +189,23 @@ inline void VirtualMachine::Builtin() {
             Error.report(position, "Runtime", ss.str());
         }
         return;
+     } else if (name == builtintype::RandomInt) {
+         i64 ub = get<i64>(pop());
+         i64 lb = get<i64>(pop());
+         std::mt19937 twister(rand());
+         std::uniform_int_distribution<int> dist(lb,ub);
+         valueStack.push_back(dist(twister));
+         return;
+     } else if (name == builtintype::RandomReal) {
+         i64 ub = get<i64>(pop());
+         i64 lb = get<i64>(pop());
+         std::uniform_real_distribution<double> unif(lb,ub);
+         std::default_random_engine re;
+         double val = unif(re);
+         valueStack.push_back(val);
+         return;
      }
-}
+    }
 
 inline void VirtualMachine::BinOp(Value v1, Value v2, char op) {
     if (isType<i64>(v1) && isType<i64>(v2)) {

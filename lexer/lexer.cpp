@@ -32,6 +32,8 @@ const unordered_map<string, TokenType> Lexer::symbols = {
 };
 
 const unordered_map<string, TokenType> Lexer::lowerkeywords = {
+    {"random_integer", TokenType::RandomInt},
+    {"random_real", TokenType::RandomReal},
     {"length", TokenType::Length},
     {"reverse", TokenType::Reverse},
     {"mid", TokenType::Mid},
@@ -108,6 +110,8 @@ const unordered_map<string, TokenType> Lexer::lowerkeywords = {
 
 
 const unordered_map<string, TokenType> Lexer::keywords = {
+    {"RANDOM_INTEGER", TokenType::RandomInt},
+    {"RANDOM_REAL", TokenType::RandomReal},
     {"LENGTH", TokenType::Length},
     {"REVERSE", TokenType::Reverse},
     {"MID", TokenType::Mid},

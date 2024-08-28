@@ -33,10 +33,13 @@ bool Compiler::lookupUnary(TokenType type) {
         case TokenType::Lparen      :grouping(); break;
         case TokenType::Rparen      :isNewline=true; break;
         case TokenType::Mid         :parseMidStatement(); break;
+        case TokenType::RandomInt   :parseRandomStatement(false); break;
+        case TokenType::RandomReal  :parseRandomStatement(true); break;
         default: return isNewline;
     }
     return isNewline;
 }
+
 
 void Compiler::parseMidStatement() {
     consume(TokenType::Lparen, "Expected ( after MID");
@@ -49,7 +52,23 @@ void Compiler::parseMidStatement() {
     advance();
     expression();
     advance();
-    emitConstant('m');
+    emitConstant(builtintype::Mid);
+    emit(OpCode::Builtin);
+}
+
+void Compiler::parseRandomStatement(bool isreal) {
+    consume(TokenType::Lparen, "Expected ( after functionCall");
+    advance();
+    expression();
+    consume(TokenType::Comma, "expected ',' after lb");
+    advance();
+    expression();
+    advance();
+    if (isreal) {
+        emitConstant(builtintype::RandomReal);
+    } else {
+        emitConstant(builtintype::RandomInt);
+    }
     emit(OpCode::Builtin);
 }
 
@@ -466,43 +485,43 @@ void Compiler::unary() {
             emit(OpCode::Not); break;
 
         case TokenType::Sin:
-            emitConstant('s');
+            emitConstant(builtintype::Sin);
             emit(OpCode::Builtin);
             break;
         case TokenType::Cos:
-            emitConstant('c');
+            emitConstant(builtintype::Cos);
             emit(OpCode::Builtin);
             break;
         case TokenType::Tan:
-            emitConstant('t');
+            emitConstant(builtintype::Tan);
             emit(OpCode::Builtin);
             break;
         case TokenType::Abs:
-            emitConstant('a');
+            emitConstant(builtintype::Abs);
             emit(OpCode::Builtin);
             break;
         case TokenType::Sqrt:
-            emitConstant('q');
+            emitConstant(builtintype::Sqrt);
             emit(OpCode::Builtin);
             break;
         case TokenType::IntCast:
-            emitConstant('i');
+            emitConstant(builtintype::IntegerCast);
             emit(OpCode::Builtin);
             break;
         case TokenType::RealCast:
-            emitConstant('r');
+            emitConstant(builtintype::RealCast);
             emit(OpCode::Builtin);
             break;
          case TokenType::StringCast:
-            emitConstant('g');
+            emitConstant(builtintype::StringCast);
             emit(OpCode::Builtin);
             break;
         case TokenType::Reverse:
-            emitConstant('v');
+            emitConstant(builtintype::Reverse);
             emit(OpCode::Builtin);
             break;
         case TokenType::Length:
-            emitConstant('l');
+            emitConstant(builtintype::Length);
             emit(OpCode::Builtin);
             break;
        default: return;

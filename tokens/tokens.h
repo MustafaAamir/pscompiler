@@ -52,7 +52,7 @@ typedef enum class TokenType : uint8_t {
     Seek, Getrecord, Putrecord,
 
     Sin, Cos, Tan, Sqrt, Abs, IntCast, RealCast, StringCast,
-    Mid, Reverse, Length,
+    Mid, Reverse, Length, RandomInt, RandomReal,
 
     Newline, Eof,
 

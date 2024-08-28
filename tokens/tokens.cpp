@@ -54,7 +54,7 @@ const char *TOKEN_TO_STR[] {
     "GETRECORD", "PUTRECORD",
 
     "SIN", "COS", "TAN", "SQRT", "ABS", "INTCAST", "REALCAST", "STRINGCAST",
-    "MID", "REVERSE", "LENGTH",
+    "MID", "REVERSE", "LENGTH", "RANDOM_INTEGER", "RANDOM_REAL",
 
     "NEWLINE", "EOF",
 };

@@ -63,52 +63,78 @@ const bool lowercase = true;
 - Minimal GUI
 
 # Language features
-- I/O statements `INPUT Identifier`, `OUTPUT Expression`
-- Conditional Expressions `IF...THEN...ELSE`
+- I/O statements `input Identifier`, `output Expression`
+- Conditional Expressions `if...then...else`
 ```
-IF <Condition> THEN
-    (Statement*)
-ELSE
-    (Statement*)
-ENDIF
+if <Condition> then
+    (Statement)*
+else
+    (Statement)*
+endif
 ```
 - Count-controlled loop  `FOR...TO...NEXT`
 ```
-DECLARE <Identifier> : INTEGER
-FOR <Identifier> <- <expression> TO <expression>
-  (Statement*)
+declare <Identifier> : integer
+for <Identifier> <- <expression> to <expression>
+  (Statement)*
 NEXT <Identifier>
 ```
-- Pre-condition loop `WHILE...DO...ENDWHILE`
+- Pre-condition loop `while...do...endwhile`
 ```
-WHILE <Condition> DO
+while <Condition> do
     (Statement)*
-ENDWHILE
+endwhile
 ```
-- Post-condition loop `REPEAT...UNTIL`
+- Post-condition loop `repeat...until`
 ```
-REPEAT
+repeat
    (Statement)*
-UNTIL <Condition>
+until <Condition>
 ```
 - Dynamic typing
-- type-convertions `INTEGER_CAST, REAL_CAST, STRING_CAST`
+- type-convertions `integer_cast, real_cast, string_cast`
 ```
-INTEGER_CAST([INTEGER | REAL])
-REAL_CAST([INTEGER | REAL])
-STRING_CAST([INTEGER | REAL | CHAR | STRING])
+integer_cast(<integer> | <real>) -> integer
+real_cast(<integer> | <real>) -> real
+string_cast(<integer> | <real> | <char> | <string>) -> string
 ```
-- builtin functions `sin, cos, tan, abs, sqrt` (radians)
 - 1-D Arrays
 ```
-DECLARE <Identifier> : ARRAY[<LB:UB>] OF <DataType>
+declare <Identifier> : array[<lb:ub>] of <DataType>
 ```
-- non-parameterized procedures
+- non-parameterized procedures (experimental)
 ```
-PROCEDURE <Identifier>()
+procedure <Identifier>()
     (Statement)*
-ENDPROCEDURE
+endprocedure
 ```
+
+# builtin functions
+- Arithmetic:
+```
+sin(<integer>  | <real>) -> real
+cos(<integer>  | <real>) -> real
+tan(<integer>  | <real>) -> real
+sqrt(<integer> | <real>) -> real
+abs(<integer>  | <real>) -> integer
+
+-- where lb <= returnvalue <= ub
+random_integer(<lb>, <ub>) -> integer
+random_real(<lb>, <ub>) -> real
+```
+- String Handling
+```
+mid(<string>, <startpos>, <length>) -> string
+length(<string>) -> string
+```
+
+- Type-casting
+```
+integer_cast(<real> | <integer>) -> integer
+real_cast(<real> | <integer>) -> real
+string_cast(<string> | <char> | <real> | <integer>) -> string
+```
+
 
 # Pending features
 - Hashmaps: (trivial to implement if std::unorderd_map<Value, Value> is utilized)
@@ -121,8 +147,3 @@ ENDPROCEDURE
 # Problems
 - Insufficient support for FOR loops. Increment value is +1 by default, therefore only loops going in the positive direction are allowed. Loops in the negative direction could be implemented by adding an addtional LT & GT comparison before the loop commences, and emiting the appropriate comparison operator (LesserEqual || GreaterEqual) based on the result.
 - Project architecture needs refactoring. ErrorReporter should be a seperate global entity to ensure configurability, i.e. enabling logging or lowercase lexing via command-line arguments.
-
-
-
-
-
