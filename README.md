@@ -119,7 +119,8 @@ ENDPROCEDURE
 - File handling: READFILE, WRITEFILE, OPENFILE, CLOSEFILE
 
 # Problems
-Insufficient support for FOR loops. Increment value is +1 by default, therefore only loops going in the positive direction are allowed. Loops in the negative direction could be implemented by adding an addtional LT & GT comparison before the loop commences, and emiting the appropriate comparison operator (LesserEqual || GreaterEqual) based on the result.
+- Insufficient support for FOR loops. Increment value is +1 by default, therefore only loops going in the positive direction are allowed. Loops in the negative direction could be implemented by adding an addtional LT & GT comparison before the loop commences, and emiting the appropriate comparison operator (LesserEqual || GreaterEqual) based on the result.
+- Project architecture needs refactoring. ErrorReporter should be a seperate global entity to ensure configurability, i.e. enabling logging or lowercase lexing via command-line arguments.
 
 
 
