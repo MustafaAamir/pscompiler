@@ -18,6 +18,8 @@ bool Compiler::lookupUnary(TokenType type) {
         case TokenType::IntCast     :unary(); break;
         case TokenType::RealCast    :unary(); break;
         case TokenType::StringCast  :unary(); break;
+        case TokenType::Reverse     :unary(); break;
+        case TokenType::Length      :unary(); break;
         case TokenType::Integer     :value(); break;
         case TokenType::String      :value(); break;
         case TokenType::Real        :value(); break;
@@ -29,9 +31,26 @@ bool Compiler::lookupUnary(TokenType type) {
         case TokenType::Rsqrbracket :isNewline = true; break;
         case TokenType::Assignment  :isNewline = true; break;
         case TokenType::Lparen      :grouping(); break;
+        case TokenType::Rparen      :isNewline=true; break;
+        case TokenType::Mid         :parseMidStatement(); break;
         default: return isNewline;
     }
     return isNewline;
+}
+
+void Compiler::parseMidStatement() {
+    consume(TokenType::Lparen, "Expected ( after MID");
+    advance();
+    expression();
+    consume(TokenType::Comma, "expected ',' after expression");
+    advance();
+    expression();
+    consume(TokenType::Comma, "Expected ',' after second argument");
+    advance();
+    expression();
+    advance();
+    emitConstant('m');
+    emit(OpCode::Builtin);
 }
 
 void Compiler::andJump() {
@@ -478,6 +497,14 @@ void Compiler::unary() {
             emitConstant('g');
             emit(OpCode::Builtin);
             break;
+        case TokenType::Reverse:
+            emitConstant('v');
+            emit(OpCode::Builtin);
+            break;
+        case TokenType::Length:
+            emitConstant('l');
+            emit(OpCode::Builtin);
+            break;
        default: return;
     }
 }
@@ -515,9 +542,18 @@ void Compiler::consume(TokenType type, string msg) {
     Error.report(currentToken, "Compiler", msg);
 }
 
+void Compiler::advanceIf(TokenType type, string msg) {
+    if (currentToken.type == type) {
+        advance();
+        return;
+    }
+    Error.report(currentToken, "Compiler", msg);
+}
+
 void Compiler::grouping() {
     advance();
     expression();
+    advance();
 }
 
 void Compiler::parsePrecedence(Precedence precedence) {
@@ -678,7 +714,7 @@ const std::unordered_map<TokenType, Precedence> Compiler::precedenceMap = {
     {TokenType::Date, Precedence::None},
     {TokenType::Boolean, Precedence::None},
 
-    {TokenType::Rparen, Precedence::None},
+    {TokenType::Rparen, Precedence::Newline},
     {TokenType::Lparen, Precedence::Call},
 
     {TokenType::Plus, Precedence::Term},
@@ -691,7 +727,7 @@ const std::unordered_map<TokenType, Precedence> Compiler::precedenceMap = {
     {TokenType::Ampersand, Precedence::Factor},
 
     {TokenType::Assignment, Precedence::Newline},
-    {TokenType::Comma, Precedence::None},
+    {TokenType::Comma, Precedence::Newline},
 
     {TokenType::Equals, Precedence::Equality},
     {TokenType::Not_equals, Precedence::Equality},

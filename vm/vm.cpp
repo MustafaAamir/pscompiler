@@ -1,6 +1,7 @@
 #include "vm.h"
 #include "../common.h"
 #include <variant>
+#include <algorithm>
 
 inline bool VirtualMachine::isNumber(Value v) {
     return (holds_alternative<double>(v) || holds_alternative<i64> (v));
@@ -44,11 +45,53 @@ inline void VirtualMachine::LogicalBinOp(Value v1, Value v2, char op) {
 
 inline void VirtualMachine::Builtin() {
     char name = get<char>(pop());
-    if (name == 's') {
+    if (name == 'm') {
+        i64 len, startpos;
+        string str;
         if (isType<i64>(valueStack.back())) {
-            valueStack.push_back(std::sin(get<i64>(pop())));
+            len      = get<i64>(pop());
+        } else {
+            Error.report(position, "Runtime", "Expected 'startpos' in MID(<string>, <startpos>, <length>) to be of type INTEGER");
+        }
+        if (isType<i64>(valueStack.back())) {
+            startpos = get<i64>(pop());
+        } else {
+            Error.report(position, "Runtime", "Expected 'length' in MID(<string>, <startpos>, <length>) to be of type INTEGER");
+        }
+        if (isType<string>(valueStack.back())) {
+            str = get<string>(pop());
+        } else {
+            Error.report(position, "Runtime", "Expected 'string' in MID(<string>, <startpos>, <length>) to be of type INTEGER");
+        }
+        if (len > str.length() || len + startpos > str.length()) {
+            Error.report(position, "Index out of bounds", "substring length exceeds string length");
+        }
+        valueStack.push_back(str.substr(startpos, len));
+        return;
+    } else if (name == 'v') {
+        if (isType<string>(valueStack.back())) {
+            string name = get<string>(pop());
+            std::reverse(name.begin(), name.end());
+            valueStack.push_back(name);
+        } else {
+            Error.report(position, "Runtime", "Invalid arguments to LENGTH(<STRING>)");
+        }
+        return;
+    } else if (name == 'l') {
+        if (isType<string>(valueStack.back())) {
+            string name = get<string>(pop());
+            valueStack.push_back((i64)name.length());
+        } else if (isType<char>(valueStack.back())) {
+            valueStack.back() = (i64)1;
+        } else {
+            Error.report(position, "Runtime", "Invalid argument to 'LENGTH' function. LENGTH takes an orgument of type CHAR or STRING");
+        }
+        return;
+    } else if (name == 's') {
+        if (isType<i64>(valueStack.back())) {
+            valueStack.push_back((double)std::sin(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
-            valueStack.push_back(std::sin(get<double>(pop())));
+            valueStack.push_back((double)std::sin(get<double>(pop())));
         } else {
             stringstream ss;
             ss << "use of unary operator 'Sin' on '"  << valueStack.back() << "' is not allowed";
@@ -57,9 +100,9 @@ inline void VirtualMachine::Builtin() {
         return;
     } else if (name == 'c') {
         if (isType<i64>(valueStack.back())) {
-            valueStack.push_back(std::cos(get<i64>(pop())));
+            valueStack.push_back((double)std::cos(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
-            valueStack.push_back(std::cos(get<double>(pop())));
+            valueStack.push_back((double)std::cos(get<double>(pop())));
        } else {
             stringstream ss;
             ss << "use of unary operator 'Cos' on '"  << valueStack.back() << "' is not allowed";
@@ -68,9 +111,9 @@ inline void VirtualMachine::Builtin() {
        return;
     } else if (name == 't') {
         if (isType<i64>(valueStack.back())) {
-            valueStack.push_back(std::tan(get<i64>(pop())));
+            valueStack.push_back((double)std::tan(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
-            valueStack.push_back(std::tan(get<double>(pop())));
+            valueStack.push_back((double)std::tan(get<double>(pop())));
        } else {
             stringstream ss;
             ss << "use of unary operator 'Tan' on '"  << valueStack.back() << "' is not allowed";
@@ -83,14 +126,14 @@ inline void VirtualMachine::Builtin() {
                 ss << "use of unary operator 'Sqrt' on negative value'"  << valueStack.back() << "' is not allowed";
                 Error.report(position, "Runtime", ss.str());
             }
-            valueStack.push_back(std::sqrt(get<i64>(pop())));
+            valueStack.push_back((double)std::sqrt(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
             if (get<i64>(valueStack.back()) < 0) {
                 stringstream ss;
                 ss << "use of unary operator 'Sqrt' on negative value'"  << valueStack.back() << "' is not allowed";
                 Error.report(position, "Runtime", ss.str());
             }
-            valueStack.push_back(std::sqrt(get<double>(pop())));
+            valueStack.push_back((double)std::sqrt(get<double>(pop())));
        } else {
             stringstream ss;
             ss << "use of unary operator 'Sqrt' on '"  << valueStack.back() << "' is not allowed";

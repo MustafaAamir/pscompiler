@@ -32,6 +32,9 @@ const unordered_map<string, TokenType> Lexer::symbols = {
 };
 
 const unordered_map<string, TokenType> Lexer::lowerkeywords = {
+    {"length", TokenType::Length},
+    {"reverse", TokenType::Reverse},
+    {"mid", TokenType::Mid},
     {"sin", TokenType::Sin},
     {"cos", TokenType::Cos},
     {"tan", TokenType::Tan},
@@ -105,6 +108,9 @@ const unordered_map<string, TokenType> Lexer::lowerkeywords = {
 
 
 const unordered_map<string, TokenType> Lexer::keywords = {
+    {"LENGTH", TokenType::Length},
+    {"REVERSE", TokenType::Reverse},
+    {"MID", TokenType::Mid},
     {"SIN", TokenType::Sin},
     {"COS", TokenType::Cos},
     {"TAN", TokenType::Tan},
@@ -282,7 +288,7 @@ void Lexer::makeWord() {
   }
   string word = input->substr(startIdx, idx - startIdx);
   unordered_map<string, TokenType> keyw;
-  if (lower) {
+  if (lowercase) {
       keyw = Lexer::lowerkeywords;
   } else {
       keyw = Lexer::keywords;

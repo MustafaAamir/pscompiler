@@ -39,6 +39,7 @@ class Compiler {
         ErrorReporter Error {};
         bool panicMode;
         void increment(Value literal, i64 value, OpCode opGet, OpCode opSet);
+        void parseMidStatement();
         void andJump();
         void beginScope();
         size_t emitJump(OpCode opCode);
@@ -52,6 +53,7 @@ class Compiler {
         void parseForAssignmentStatement(Token iterator);
         void grouping();
         void consume(TokenType type, std::string msg);
+        void advanceIf(TokenType type, std::string msg);
         void resolver();
         void expressionStatement();
         void synchronize();
