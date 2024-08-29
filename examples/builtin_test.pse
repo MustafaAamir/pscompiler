@@ -26,7 +26,7 @@ next i
 output reverse "Hello, World!"
 output reverse ("Hello, " & reverse "World!")
 
-if random(1, 100) = 53 then
+if random_integer(1, 100) = 53 then
     output "what are the odds?"
 else
     output "?"
