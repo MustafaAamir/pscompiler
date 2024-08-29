@@ -19,30 +19,7 @@ dnf install rlwrap
 rlwrap ./pscompiler --help
 ```
 
-### To enable a minimal GUI interface
-Open pscompiler/error/error.h in your editor
-
-```bash
-vi error/error.h
-```
-set gui to `true` to disable ANSI colors
-```c++
-const bool gui = true;
-```
-compile the project
-```bash
-make
-./pscompiler --help
-```
-install GUI dependencies
-
-```bash
-pip install PyQt6
-python gui.py
-```
-- pscompiler is primarily a CLI application.
-
-### To enable lowercase keywords
+### To enable/disable lowercase keywords
 Open pscompiler/lexer/lexer.h
 
 ```bash
@@ -158,6 +135,7 @@ Output: 1.84147
 > output sin(1 + 1)
 Output: 0.909297
 ```
+- Further demonstration of builtins in examples/builtin_test.pse
 
 
 # Pending features

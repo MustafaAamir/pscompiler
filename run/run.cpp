@@ -2,6 +2,14 @@
 #include "run.h"
 
 static bool cmdHandler(std::string cmd);
+
+static std::string tolower(std::string str) {
+    string newstr = "";
+    for (auto ch : str) {
+        newstr += std::tolower(ch);
+    }
+    return newstr;
+}
 static void handleBlock(std::string &line) {
     for (const std::string str : {"IF", "FOR", "REPEAT", "WHILE"}) {
         const std::unordered_map<std::string, std::string> endMap = {
@@ -17,16 +25,20 @@ static void handleBlock(std::string &line) {
         int idt = 0;
         std::string tmp;
 
-        if (trim(line).substr(0, str.length()) == str) {
+        if (trim(line).substr(0, str.length()) == str
+                || tolower(trim(line).substr(0, str.length())) == tolower(str)) {
            ++idt;
             while (idt != 0) {
                 printColor(FG_RED, "....", false);
                 line += "\n";
                 std::getline(std::cin, tmp);
                 line += tmp;
-                if (trim(tmp).substr(0, it->second.length()) == it->second) {
+                if (trim(tmp).substr(0, it->second.length()) == it->second
+                        || tolower(trim(tmp).substr(0, it->second.length()) ==
+                            tolower(it->second))) {
                     --idt;
-                } else if (trim(tmp).substr(0, str.length()) == str) {
+                } else if (trim(tmp).substr(0, str.length()) == str ||
+                           tolower(trim(tmp).substr(0, str.length())) == tolower(str) ) {
                     ++idt;
                 }
             }

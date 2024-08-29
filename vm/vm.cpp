@@ -129,12 +129,12 @@ inline void VirtualMachine::Builtin() {
             }
             valueStack.push_back((double)std::sqrt(get<i64>(pop())));
         } else if (isType<double>(valueStack.back())) {
-            if (get<i64>(valueStack.back()) < 0) {
+            if (get<double>(valueStack.back()) < 0.0) {
                 stringstream ss;
                 ss << "use of unary operator 'Sqrt' on negative value'"  << valueStack.back() << "' is not allowed";
                 Error.report(position, "Runtime", ss.str());
             }
-            valueStack.push_back((double)std::sqrt(get<double>(pop())));
+            valueStack.push_back(std::sqrt(get<double>(pop())));
        } else {
             stringstream ss;
             ss << "use of unary operator 'Sqrt' on '"  << valueStack.back() << "' is not allowed";
@@ -268,7 +268,6 @@ inline void VirtualMachine::Concatenate(Value v1, Value v2) {
             leftOperand.push_back(rightOperand);
             valueStack.push_back(leftOperand);
         }
-
     }
 
     return;

@@ -229,6 +229,8 @@ char escFmt(char c) {
             return '"';
         case '\\':
             return '\\';
+        case 'b':
+            return '\b';
         default:
             return -1;
     }
@@ -245,6 +247,7 @@ void Lexer::makeString() {
             if (c == -1) {
                 Error.report(line, column, "Syntax", "Invalid escape sequence");
             }
+            str += c;
         } else {
             str += currentChar;
         }

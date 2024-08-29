@@ -3,7 +3,7 @@
 #include "../lexer/lexer.h"
 #include "../vm/vm.h"
 #include "../error/error.h"
-#include <unistd.h>
+//#include <unistd.h>
 #include <fstream>
 #include <chrono>
 

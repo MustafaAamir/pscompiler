@@ -1,11 +1,11 @@
-DECLARE i : INTEGER
-DECLARE Arr : ARRAY[1:10] OF INTEGER
-IF TRUE THEN
-    DECLARE Arr1 : ARRAY[1:100] OF INTEGER
-    Arr[2] <- 99
-    OUTPUT Arr[2]
-ELSE
-    OUTPUT 1
-ENDIF
+declare i : integer
+declare arr : array[1:10] of integer
+if true then
+    declare arr1 : array[1:100] of integer
+    arr[2] <- 99
+    output arr[2]
+else
+    output 1
+endif
 
-Arr[1] <- 123
+arr[1] <- 123

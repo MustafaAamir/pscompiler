@@ -1,23 +1,23 @@
-DECLARE Array : ARRAY[1:2] OF INTEGER
-DECLARE i, j, temp, short : INTEGER
+declare array : array[1:2] of integer
+declare i, j, temp, short : integer
 
 i <- 0
 temp <- 0
 
-FOR i <- 1 TO 20
-	Array[i] <- 20 - i
-NEXT i
+for i <- 1 to 20
+	array[i] <- 20 - i
+next i
 
-FOR i <- 2 TO 20
-	temp <- Array[i]
+for i <- 2 to 20
+	temp <- array[i]
 	j <- i
-	WHILE (j > 2 AND Array[j-1] > temp) DO
-		Array[j] <- Array[j-1]
+	while (j > 2 and array[j-1] > temp) do
+		array[j] <- array[j-1]
 		j <- j - 1
-	ENDWHILE
-	Array[j] <- temp
-NEXT i
+	endwhile
+	array[j] <- temp
+next i
 
-FOR i <- 2 TO 20
-	OUTPUT Array[i]
-NEXT i
+for i <- 2 to 20
+	output array[i]
+next i

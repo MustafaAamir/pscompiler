@@ -1,0 +1,28 @@
+declare sins : array[1:360] of real
+declare coss : array[1:360] of real
+declare tans : array[1:360] of real
+declare sum  : array[1:360] of real
+declare i : integer
+declare line : string
+
+
+for i <- 1 to 360
+    sins[i] <- abs sin i
+    coss[i] <- abs cos i
+    tans[i] <- abs tan i
+    sum[i] <- sins[i] * coss[i] * tans[i]
+next i
+
+output "sin(344): " & string_cast(sins[344])
+output "cos(344): " & string_cast(coss[344])
+output "tan(344): " & string_cast(tans[344])
+
+output sqrt sum[344] - sqrt abs -100
+line <- "abcdef"
+for i <- 1 to length(line)
+    output mid(line, 0, i)
+next i
+
+output reverse "Hello, World!"
+output reverse ("Hello, " & reverse "World!")
+
