@@ -26,3 +26,9 @@ next i
 output reverse "Hello, World!"
 output reverse ("Hello, " & reverse "World!")
 
+if random(1, 100) = 53 then
+    output "what are the odds?"
+else
+    output "?"
+endif
+
