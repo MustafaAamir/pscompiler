@@ -79,10 +79,10 @@ void invokeTests(bool benchmark, bool lexer) {
             } else {
                 if (benchmark) {
                     START_TIMER;
-                    vm.interpret(testn, idx);
+                    vm.interpret(testn);
                     STOP_TIMER;
                 } else {
-                    vm.interpret(testn, idx);
+                    vm.interpret(testn);
                 }
             }
         } catch (const std::exception &e) {

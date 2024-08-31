@@ -21,13 +21,6 @@ enum class Precedence {
     Primary
 };
 
-enum class Scope {
-    Global,
-    Function,
-    Case,
-    If,
-};
-
 typedef struct Identifier {
     std::string name;
     int depth;
@@ -36,14 +29,16 @@ typedef struct Identifier {
 
 enum builtintype : char {
     Sin, Cos, Tan, Abs, Sqrt, RandomInt, RandomReal, Length, Mid, IntegerCast,
-    StringCast, RealCast, Reverse
+    StringCast, RealCast, Reverse, System
 };
+
 class Compiler {
     private:
         ErrorReporter Error {};
         bool panicMode;
         void increment(Value literal, i64 value, OpCode opGet, OpCode opSet);
         void parseMidStatement();
+        void parseSystemStatement();
         void parseRandomStatement(bool isreal);
         void andJump();
         void beginScope();
@@ -120,7 +115,7 @@ class Compiler {
         vector<std::pair<int, int>> chunkPosition;
         void emit(OpCode opCode, std::optional<std::byte> argument = std::nullopt);
         Compiler() = default;
-        std::unique_ptr<Chunk> compile(std::string &input, int line);
+        std::unique_ptr<Chunk> compile(std::string &input);
         void initCompiler(std::string &input);
 };
 

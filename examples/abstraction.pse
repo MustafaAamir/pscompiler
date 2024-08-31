@@ -1,0 +1,27 @@
+declare a, res : real
+declare str, endsw : string
+declare random_variable : integer
+
+procedure sin2a
+    res <- sin sin a
+    output "The value of sin^2(a) = " & string_cast a
+endprocedure
+
+procedure endswith
+    endsw <- mid(str, length str - 1, 1)
+    output "string '" & str & "' ends with '" & endsw & "'"
+endprocedure
+
+procedure randomer
+    random_variable <- random_variable * random_integer(1, 100) + random_integer(100, 10000) + random_integer(10000, 100000)
+    output "a randomer variable than " & string_cast random_integer(1, 100000) & " is " &  string_cast random_variable
+endprocedure
+
+str <- "terrible programming"
+a <- 189.0
+random_variable <- 129
+
+call endswith
+call sin2a
+call randomer
+

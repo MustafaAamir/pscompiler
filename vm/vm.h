@@ -18,25 +18,13 @@ typedef struct ValueArray {
         array(array), ub(ub), lb(lb), name(name) {}
 } ValueArray;
 
-typedef struct Function {
-    string name;
-    uint8_t argsCount;
-    vector<std::pair<string, TokenType>> ArgTypePairVector;
-    TokenType returnValue;
-    vector<uint8_t> bytecode;
-    Function() = default;
-    Function(string name, uint8_t argsCount, vector<std::pair<string, TokenType>> ArgTypePairVector,
-        TokenType returnValue, vector<uint8_t> bytecode) : name(name), argsCount(argsCount),
-        ArgTypePairVector(ArgTypePairVector), bytecode(bytecode) {}
-} Function;
-
 class VirtualMachine {
     public:
-        void interpret(string input, int line);
+        void interpret(string input);
         vector<Value> valueStack {};
     private:
         ErrorReporter Error;
-        uint8_t reg {0};
+        vector<uint8_t> reg;
         void printValueStack(OpCode opCode);
         int line;
         Compiler compiler {};
@@ -47,13 +35,11 @@ class VirtualMachine {
         inline void BinOp(Value v1, Value v2, char op);
         inline void LogicalBinOp(Value v1, Value v2, char op);
         inline void Concatenate(Value v1, Value v2);
-        template<typename T> bool isType(Value v);
         std::pair<int, int> position;
         std::unique_ptr<Chunk> chunk;
         unordered_map<string, Value> globals {};
         unordered_map<string, Value> locals  {};
         unordered_map<string, std::unique_ptr<ValueArray>> valueArrayMap;
-        unordered_map<string, std::unique_ptr<Function>> FunctionMap;
         size_t offset {0};
 };
 

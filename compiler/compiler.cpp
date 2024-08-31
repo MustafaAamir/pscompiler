@@ -56,6 +56,14 @@ void Compiler::parseMidStatement() {
     emit(OpCode::Builtin);
 }
 
+void Compiler::parseSystemStatement() {
+    advance();
+    expression();
+    advance();
+    emitConstant(builtintype::System);
+    emit(OpCode::Builtin);
+}
+
 void Compiler::parseRandomStatement(bool isreal) {
     consume(TokenType::Lparen, "Expected ( after functionCall");
     advance();
@@ -174,9 +182,9 @@ bool Compiler::match(TokenType type) {
 void Compiler::parseProcedureStatement() {
    consume(TokenType::Identifier, "Expected Identifier after PROCEDURE");
    const string name = get<string>(currentToken.literal);
-   consume(TokenType::Lparen, "Expected (");
-   consume(TokenType::Rparen, "Expected )");
-   consume(TokenType::Newline, "Expected newline after )");
+   //consume(TokenType::Lparen, "Expected (");
+   //consume(TokenType::Rparen, "Expected )");
+   consume(TokenType::Newline, "Expected newline after Identifier");
    advance();
    beginScope();
    const size_t normalJump = emitJump(OpCode::Jump);
@@ -192,8 +200,8 @@ void Compiler::parseProcedureStatement() {
 void Compiler::parseCallStatement() {
     consume(TokenType::Identifier, "Expected Identifier after CALL");
     const string name = get<string>(currentToken.literal);
-    consume(TokenType::Lparen, "Expected ( after Identifier");
-    consume(TokenType::Rparen, "Expected ) after args");
+    //consume(TokenType::Lparen, "Expected ( after Identifier");
+    //consume(TokenType::Rparen, "Expected ) after args");
     const auto it = functionIdxMap.find(name);
     if (it == functionIdxMap.end()) {
         Error.report(currentToken, "Compiler", "Function / Procedure is undefined");
@@ -203,7 +211,7 @@ void Compiler::parseCallStatement() {
     consume(TokenType::Newline, "Expected newline after )");
 }
 
-std::unique_ptr<Chunk> Compiler::compile(string &input, int line) {
+std::unique_ptr<Chunk> Compiler::compile(string &input) {
     initCompiler(input);
     while (peekToken.type != TokenType::Eof) { program(); }
     emit(OpCode::Return);
@@ -350,6 +358,9 @@ void Compiler::parseIfStatement() {
 
 void Compiler::program() {
     switch (currentToken.type) {
+        case TokenType::System:
+            parseSystemStatement();
+            break;
         case TokenType::Function:
             return;
         case TokenType::Call:

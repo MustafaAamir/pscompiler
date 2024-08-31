@@ -111,6 +111,11 @@ integer_cast(<real> | <integer>) -> integer
 real_cast(<real> | <integer>) -> real
 string_cast(<string> | <char> | <real> | <integer>) -> string
 ```
+- System
+```
+system(<string>)
+```
+used to execute system commands
 - builtin functions with a single argument can be used without parentheses:
 ```
 > output sin 1

@@ -1,0 +1,9 @@
+declare module : string
+system "cal"
+system "sleep 4"
+system "clear"
+output "enter a python module"
+input module
+system "python -m " & module
+
+

@@ -62,10 +62,10 @@ void repl(bool bench) {
         try {
             if (bench) {
                 START_TIMER;
-                vm.interpret(line, idx);
+                vm.interpret(line);
                 STOP_TIMER;
             } else {
-                vm.interpret(line, idx);
+                vm.interpret(line);
             }
         } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
@@ -125,10 +125,10 @@ void runFile(std::string fileName, bool bench, bool lexer) {
     try {
         if (bench) {
             START_TIMER;
-            vm.interpret(input, 0);
+            vm.interpret(input);
             STOP_TIMER;
         } else {
-            vm.interpret(input, 0);
+            vm.interpret(input);
         }
     } catch (const std::exception &e) {
         std::cout << e.what() << std::endl;

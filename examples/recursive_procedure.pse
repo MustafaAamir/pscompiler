@@ -1,0 +1,16 @@
+declare a : real
+
+procedure converging()
+    if a > 0.1 then
+        a <- sin a
+        output "Value of 'a' is " & string_cast a
+        call converging()
+    endif
+endprocedure
+
+
+a <- 0.2
+call converging()
+output a
+
+
