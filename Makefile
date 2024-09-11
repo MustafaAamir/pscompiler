@@ -1,9 +1,7 @@
 all:
 	g++ error/error.cpp main.cpp vm/vm.cpp chunk/chunk.cpp compiler/compiler.cpp run/run.cpp tests/tests.cpp  lexer/lexer.cpp tokens/tokens.cpp -Ofast -march=native -o pscompiler
-
 debug:
-	g++ error/error.cpp main.cpp vm/vm.cpp chunk/chunk.cpp compiler/compiler.cpp run/run.cpp tests/tests.cpp  lexer/lexer.cpp tokens/tokens.cpp -Ofast -march=native -g -o pscompilerdebug
-
+	g++ error/error.cpp main.cpp vm/vm.cpp chunk/chunk.cpp compiler/compiler.cpp run/run.cpp tests/tests.cpp  lexer/lexer.cpp tokens/tokens.cpp -Ofast -march=native -g -Wall -Wextra -o pscompilerdebug
 nofast:
 	g++ error/error.cpp main.cpp vm/vm.cpp chunk/chunk.cpp compiler/compiler.cpp run/run.cpp tests/tests.cpp  lexer/lexer.cpp tokens/tokens.cpp -O0 -o pscompiler
 

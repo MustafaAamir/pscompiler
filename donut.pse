@@ -1,57 +1,66 @@
 declare cosa, sina, cosb, sinb, theta, theta_spacing, costheta, sintheta, phi, phi_spacing, cosphi, sinphi : real
 declare luminance_index, circlex, circley, x, y, z, ooz, l, r1, r2, k2, k1, a, b : real
-declare xp, yp, screen_width, screen_height, i, j : integer
-declare zbuffer : array[1 : 35 * 35] of real
-declare char_output : array[1 : 35 * 35] of char
-declare empty_row_zbuffer : array[1:35] of real
-declare empty_row_char_buffer : array[1:35] of char
+declare zbuffer : array[0 : 34 * 34] of real
+declare char_output : array[0 : 34 * 34] of string
+declare empty_row_zbuffer : array[0:34] of real
+declare empty_row_char_buffer : array[0:34] of string
 declare string_choice, concatenated : string
+declare xp, yp, screen_width, screen_height, i, j : integer
 
-screen_width <- 35
-screen_height <- 35
+for i <- 0 to 34
+    empty_row_zbuffer[i] <- 0.0
+    empty_row_char_buffer[i] <-  " "
+next i
+
+
+screen_width <- 34
+screen_height <- 34
 theta_spacing <- 0.07
 phi_spacing   <- 0.02
-r1 <- 1
-r2 <- 2
-k2 <- 5
-k1 <- screen_width * k2 * 3 / (8 * (r1 + r2))
+r1 <- 1.0
+r2 <- 2.0
+k2 <- 5.0
+k1 <- (34.0 * k2 * 3.0) / (8.0 * 2.0)
 a <- 1.0
 b <- 1.0
 
 
-for i <- 1 to screen_width
-    empty_row_zbuffer[i] <- 0
-    empty_row_char_buffer[i] <-  ' '
-next i
 
 procedure reset
     cosa <- cos a
     cosb <- cos b
     sina <- sin a
     sinb <- sin b
-    for i <- 1 to 35
-        for j <- 1 to 35
-            zbuffer[i * j] <- 0
-            char_output[i * j] <- ' '
-        next j
-    next i
+    declare g, h : integer
+    for g <- 0 to 34
+        for h <- 0 to 34
+            zbuffer[g * 34 + h] <- 0.0
+            char_output[g * 34 + h] <- " "
+        next h
+    next g
     theta <- 0.0
+endprocedure
+
+procedure oozgzubber_defs_one
+    x <- circlex*(cosb*cosphi + sina*sinb*sinphi) - circley*cosa*sinb
+    y <- circlex*(sinb*cosphi - sina*cosb*sinphi) + circley*cosa*cosb
+    z <- k2 + cosa*circlex*sinphi + circley*sina
+endprocedure
+
+procedure oozgzubber_defs_two
+    ooz <- 1/z
+    xp <- integer_cast(34/2.0 + k1 * ooz * x)
+    yp <- integer_cast(34/2.0 - k1*ooz*y)
+    l <- cosphi*costheta*sinb - cosa*costheta*sinphi - sina*sintheta + cosb*(cosa*sintheta - costheta*sina*sinphi)
 endprocedure
 
 
 procedure oozgzubber
-    x <- circlex*(cosb*cosphi + sina*sinb*sinphi) - circley*cosa*sinb
-    y <- circlex*(sinb*cosphi - sina*cosb*sinphi) + circley*cosa*cosb
-    z <- k2 + cosa*circlex*sinphi + circley*sina
-    ooz <- 1/z
-    xp <- integer_cast(screen_width/2 + k1 * ooz * x)
-    yp <- integer_cast(screen_height/2 - k1*ooz*y)
-
-    l <- cosphi*costheta*sinb - cosa*costheta*sinphi - sina*sintheta + cosb*(cosa*sintheta - costheta*sina*sinphi)
-
+    call oozgzubber_defs_one
+    call oozgzubber_defs_two
     if l > 0 then
-        if ooz > zbuffer[xp * yp] then
-            zbuffer[xp * yp] <- ooz
+        if ooz > zbuffer[xp * 34 + yp] then
+            zbuffer[xp * 34 + yp] <- ooz
             luminance_index <- l * 8
             if luminance_index < 0 then
                 luminance_index <- 11 - (luminance_index * (-1))
@@ -59,45 +68,40 @@ procedure oozgzubber
             if luminance_index < 1 then
                 luminance_index <- luminance_index + 1
             endif
-            char_output[xp * yp] <- mid(string_choice, integer_cast(luminance_index), 1)
+            char_output[xp * 34 + yp] <- mid(string_choice, integer_cast(luminance_index), 1)
         endif
     endif
 endprocedure
 
-procedure generate
-    call reset
+procedure two_pi
     while theta < 2.0 * 3.14159265 do
         theta <- theta + theta_spacing
         costheta <- cos theta
         sintheta <- sin theta
         phi <- 0.0
-
         while phi < 2 * 3.14159265 do
             phi <- phi + phi_spacing
             cosphi <- cos phi
             sinphi <- sin phi
-
             circlex <- r2 + r1 * costheta
             circley <- r1 * sintheta
-
-
             call oozgzubber
         endwhile
     endwhile
-    for i <- 1 to screen_height
+endprocedure
+
+procedure generate
+    call reset
+    call two_pi
+    for i <- 0 to 34
         concatenated <- ""
-        for j <- 1 to screen_width
-            concatenated <- concatenated & char_output[i * j]
+        for j <- 0 to 34
+            concatenated <- concatenated & char_output[i * 34 + j]
         next j
         output concatenated
     next i
 endprocedure
 
 
-for i <- 1 to 250
-    call generate
-    a <- a + 0.08
-    b <- b + 0.03
-next i
 
-
+call generate

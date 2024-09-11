@@ -701,8 +701,8 @@ void Compiler::parseForLoopStatement() {
     consume(TokenType::Identifier, "Expected identifier after i");
     emitConstant(std::move(currentToken.literal));
     emit(OpCode::IncrementGlobal);
-    emitLoop(loopJump);
-    patchJump(jumpne);
+    emitLoop(loopJump); // goto loopJump
+    patchJump(jumpne);  // from jumpne to emitPop
     emitPop();
     advance();
 }

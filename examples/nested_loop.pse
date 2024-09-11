@@ -1,0 +1,9 @@
+declare i, j, k : integer
+
+for i <- 1 to 10
+    for j <- 1 to 10
+        for k <- 1 to 10
+            output 1
+        next k
+    next j
+next i

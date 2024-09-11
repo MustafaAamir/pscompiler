@@ -30,28 +30,22 @@
 
 
 static const std::unordered_map<OpCode, std::string> OpCodeMap = {
+    {OpCode::Builtin, "builtin"},
     {OpCode::Constant, "Constant"},
     {OpCode::IncrementGlobal, "IncrementGlobal"},
     {OpCode::Pop, "Pop"},
-
     {OpCode::DefineGlobal, "DefineGlobal"},
     {OpCode::DefineGlobalArray, "DefineGlobalArray"},
-
     {OpCode::DefineLocal, "DefineLocal"},
     {OpCode::DefineLocalArray, "DefineLocalArray"},
-
     {OpCode::SetGlobal, "SetGlobal"},
     {OpCode::SetGlobalArray, "SetGlobalArray"},
-
     {OpCode::GetGlobal, "GetGlobal"},
     {OpCode::GetGlobalArray, "GetGlobalArray"},
-
     {OpCode::SetLocal, "SetLocal"},
     {OpCode::SetLocalArray, "SetLocalArray"},
-
     {OpCode::GetLocal, "GetLocal"},
     {OpCode::GetLocalArray, "GetLocalArray"},
-
     {OpCode::Equal, "Equal"},
     {OpCode::NotEqual, "NotEqual"},
     {OpCode::Greater, "Greater"},

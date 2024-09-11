@@ -1,19 +1,19 @@
-declare length, i, j, tmp : integer
+declare len, i, j, tmp : integer
 
-length <- 1000
+len <- 1000
 
-declare unsorted : array[1:length] of integer
+declare unsorted : array[1:len] of integer
 
-for i <- 1 to length
-    unsorted[i] <- 100- - i
+for i <- 1 to len
+    unsorted[i] <- 100 - i
 next i
 
-for i <- 1 to length - 1
-    for j <- 1 to length - i
+for i <- 1 to len - 1
+    for j <- 1 to len - i
         if unsorted[j] > unsorted[j + 1] then
             tmp <- unsorted[j]
-            unsorted[j] <- unsorted[j + 1]
             unsorted[j + 1] <- tmp
+            unsorted[j] <- unsorted[j + 1]
         endif
     next j
 next i

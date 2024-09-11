@@ -344,7 +344,7 @@ void VirtualMachine::run() {
   for (offset = 0; offset < chunk->bytecode.size();) {
     position = compiler.chunkPosition[offset];
     const auto opCode = static_cast<OpCode>(chunk->read(offset++));
-    //printValueStack(opCode);
+    printValueStack(opCode);
     switch (opCode) {
     case (OpCode::Builtin): {
       Builtin();
@@ -883,7 +883,7 @@ void VirtualMachine::run() {
       Error.report(position, "Runtime",
                    "OpCode has no associated functionality\n");
     }
-    //printValueStack(opCode);
+    printValueStack(opCode);
   }
 }
 

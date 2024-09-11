@@ -29,12 +29,8 @@ enum AnsiCode {
 class Modifier {
     AnsiCode code;
 public:
-    const bool gui = false;
     Modifier(AnsiCode pCode) : code(pCode) {}
     friend std::ostream& operator<<(std::ostream& os, const Modifier& mod) {
-        if (mod.gui) {
-            return os;
-        }
         return os << "\033[" << mod.code << "m";
     }
 };

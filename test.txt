@@ -1,0 +1,3 @@
+declare a : integer
+a <- 1 + 1
+output a

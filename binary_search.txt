@@ -1,0 +1,36 @@
+declare found, search_failed: boolean
+declare first, last, middle, search_item : integer
+declare nums : array[1:8] of integer
+declare i : integer
+found <- false
+search_failed <- false
+first <- 1
+last <- 8
+
+for i <- 1 to 8
+    nums[i] <- i
+next i
+
+search_item <- 5
+
+while (not found and not search_failed) do
+    middle <- integer_cast((first + last) / 2)
+    if nums[middle] = search_item then
+        found <- true
+    else
+        if first >= last then
+            search_failed <- true
+        else
+            if nums[middle] > search_item then
+                last <- middle + 1
+            else
+                first <- middle
+            endif
+        endif
+    endif
+endwhile
+if found = true then
+    output middle
+else
+    output "item not present"
+endif
