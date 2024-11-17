@@ -1,45 +1,100 @@
 #include "compiler.h"
-#include "../tokens/tokens.h"
 #include "../chunk/chunk.h"
 #include "../common.h"
+#include "../tokens/tokens.h"
 #include <limits>
 #include <sstream>
 
 bool Compiler::lookupUnary(TokenType type) {
     bool isNewline = false;
     switch (type) {
-        case TokenType::Minus       :unary(); break;
-        case TokenType::Not         :unary(); break;
-        case TokenType::Sin         :unary(); break;
-        case TokenType::Cos         :unary(); break;
-        case TokenType::Tan         :unary(); break;
-        case TokenType::Sqrt        :unary(); break;
-        case TokenType::Abs         :unary(); break;
-        case TokenType::IntCast     :unary(); break;
-        case TokenType::RealCast    :unary(); break;
-        case TokenType::StringCast  :unary(); break;
-        case TokenType::Reverse     :unary(); break;
-        case TokenType::Length      :unary(); break;
-        case TokenType::Integer     :value(); break;
-        case TokenType::String      :value(); break;
-        case TokenType::Real        :value(); break;
-        case TokenType::Boolean     :value(); break;
-        case TokenType::Char        :value(); break;
-        case TokenType::Identifier  :resolver(); break;
-        case TokenType::Newline     :advance(); isNewline = true; break;
-        case TokenType::Then        :isNewline = true; break;
-        case TokenType::Rsqrbracket :isNewline = true; break;
-        case TokenType::Assignment  :isNewline = true; break;
-        case TokenType::Lparen      :grouping(); break;
-        case TokenType::Rparen      :isNewline=true; break;
-        case TokenType::Mid         :parseMidStatement(); break;
-        case TokenType::RandomInt   :parseRandomStatement(false); break;
-        case TokenType::RandomReal  :parseRandomStatement(true); break;
-        default: return isNewline;
+    case TokenType::Minus:
+        unary();
+        break;
+    case TokenType::Not:
+        unary();
+        break;
+    case TokenType::Sin:
+        unary();
+        break;
+    case TokenType::Cos:
+        unary();
+        break;
+    case TokenType::Tan:
+        unary();
+        break;
+    case TokenType::Sqrt:
+        unary();
+        break;
+    case TokenType::Abs:
+        unary();
+        break;
+    case TokenType::IntCast:
+        unary();
+        break;
+    case TokenType::RealCast:
+        unary();
+        break;
+    case TokenType::StringCast:
+        unary();
+        break;
+    case TokenType::Reverse:
+        unary();
+        break;
+    case TokenType::Length:
+        unary();
+        break;
+    case TokenType::Integer:
+        value();
+        break;
+    case TokenType::String:
+        value();
+        break;
+    case TokenType::Real:
+        value();
+        break;
+    case TokenType::Boolean:
+        value();
+        break;
+    case TokenType::Char:
+        value();
+        break;
+    case TokenType::Identifier:
+        resolver();
+        break;
+    case TokenType::Newline:
+        advance();
+        isNewline = true;
+        break;
+    case TokenType::Then:
+        isNewline = true;
+        break;
+    case TokenType::Rsqrbracket:
+        isNewline = true;
+        break;
+    case TokenType::Assignment:
+        isNewline = true;
+        break;
+    case TokenType::Lparen:
+        grouping();
+        break;
+    case TokenType::Rparen:
+        isNewline = true;
+        break;
+    case TokenType::Mid:
+        parseMidStatement();
+        break;
+    case TokenType::RandomInt:
+        parseRandomStatement(false);
+        break;
+    case TokenType::RandomReal:
+        parseRandomStatement(true);
+        break;
+    default:
+        return isNewline;
     }
     return isNewline;
 }
-
 
 void Compiler::parseMidStatement() {
     consume(TokenType::Lparen, "Expected ( after MID");
@@ -81,7 +136,7 @@ void Compiler::parseRandomStatement(bool isreal) {
 }
 
 void Compiler::andJump() {
-    int endJump  = emitJump(OpCode::JumpNE);
+    int endJump = emitJump(OpCode::JumpNE);
     emitPop();
     parsePrecedence(Precedence::And);
     patchJump(endJump);
@@ -89,22 +144,53 @@ void Compiler::andJump() {
 
 void Compiler::lookupBinary(TokenType type) {
     switch (type) {
-        case TokenType::Plus         :binary(); break;
-        case TokenType::Minus        :binary(); break;
-        case TokenType::Star         :binary(); break;
-        case TokenType::Slash        :binary(); break;
-        case TokenType::Div          :binary(); break;
-        case TokenType::Mod          :binary(); break;
-        case TokenType::Ampersand    :binary(); break;
-        case TokenType::Greater      :binary(); break;
-        case TokenType::Greater_equal:binary(); break;
-        case TokenType::Lesser_equal :binary(); break;
-        case TokenType::Lesser       :binary(); break;
-        case TokenType::Not_equals   :binary(); break;
-        case TokenType::Equals       :binary(); break;
-        case TokenType::And          :binary(); break;
-        case TokenType::Or           :binary(); break;
-        default: return;
+    case TokenType::Plus:
+        binary();
+        break;
+    case TokenType::Minus:
+        binary();
+        break;
+    case TokenType::Star:
+        binary();
+        break;
+    case TokenType::Slash:
+        binary();
+        break;
+    case TokenType::Div:
+        binary();
+        break;
+    case TokenType::Mod:
+        binary();
+        break;
+    case TokenType::Ampersand:
+        binary();
+        break;
+    case TokenType::Greater:
+        binary();
+        break;
+    case TokenType::Greater_equal:
+        binary();
+        break;
+    case TokenType::Lesser_equal:
+        binary();
+        break;
+    case TokenType::Lesser:
+        binary();
+        break;
+    case TokenType::Not_equals:
+        binary();
+        break;
+    case TokenType::Equals:
+        binary();
+        break;
+    case TokenType::And:
+        binary();
+        break;
+    case TokenType::Or:
+        binary();
+        break;
+    default:
+        return;
     }
 }
 
@@ -116,12 +202,13 @@ Precedence Compiler::lookupPrecedence(TokenType type) {
     return it->second;
 }
 
-
 void Compiler::emit(OpCode opCode, std::optional<std::byte> argument) {
-    chunkPosition.push_back(std::make_pair(currentToken.line, currentToken.column));
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
     chunk->writeChunk(opCode);
     if (argument) {
-        chunkPosition.push_back(std::make_pair(currentToken.line, currentToken.column));
+        chunkPosition.push_back(
+            std::make_pair(currentToken.line, currentToken.column));
         chunk->writeByte(*argument);
     }
 }
@@ -129,31 +216,31 @@ void Compiler::emit(OpCode opCode, std::optional<std::byte> argument) {
 void Compiler::emitConstant(Value &&value) {
     auto idx = static_cast<uint16_t>(chunk->addConstant(std::move(value)));
     if (idx > std::numeric_limits<uint16_t>::max()) {
-        Error.report(currentToken, "Stack overflow",  "too many constants in one chunk");
+        Error.report(currentToken, "Stack overflow",
+                     "too many constants in one chunk");
     }
     emit(OpCode::Constant, static_cast<std::byte>((idx >> 8) & 0xff));
-    chunkPosition.push_back(std::make_pair(currentToken.line, currentToken.column));
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
     chunk->writeByte(static_cast<std::byte>(idx & 0xff));
 }
 
 void Compiler::emitCall(i64 &&idx) {
-    const auto index = static_cast<uint16_t>(chunk->addConstant(std::move(idx)));
+    const auto index =
+        static_cast<uint16_t>(chunk->addConstant(std::move(idx)));
     if (index > std::numeric_limits<uint16_t>::max()) {
-        Error.report(currentToken, "Stack overflow",  "too many constants in one chunk");
+        Error.report(currentToken, "Stack overflow",
+                     "too many constants in one chunk");
     }
     emit(OpCode::Call, static_cast<std::byte>((index >> 8) & 0xff));
-    chunkPosition.push_back(std::make_pair(currentToken.line, currentToken.column));
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
     chunk->writeByte(static_cast<std::byte>(index & 0xff));
-
 }
 
-void Compiler::emitPop() {
-    emit(OpCode::Pop);
-}
+void Compiler::emitPop() { emit(OpCode::Pop); }
 
-void Compiler::expression() {
-    parsePrecedence(Precedence::None);
-}
+void Compiler::expression() { parsePrecedence(Precedence::None); }
 
 void Compiler::initCompiler(string &input) {
     idx = 0;
@@ -168,43 +255,46 @@ void Compiler::initCompiler(string &input) {
         return;
     }
     currentToken = *TokenList[0];
-    peekToken    = *TokenList[1];
+    peekToken = *TokenList[1];
     chunk = std::make_unique<Chunk>();
     idx += 1;
 }
 
 bool Compiler::match(TokenType type) {
-    if (currentToken.type != type) { return false; }
+    if (currentToken.type != type) {
+        return false;
+    }
     advance();
     return true;
 }
 
 void Compiler::parseProcedureStatement() {
-   consume(TokenType::Identifier, "Expected Identifier after PROCEDURE");
-   const string name = get<string>(currentToken.literal);
-   //consume(TokenType::Lparen, "Expected (");
-   //consume(TokenType::Rparen, "Expected )");
-   consume(TokenType::Newline, "Expected newline after Identifier");
-   advance();
-   beginScope();
-   const size_t normalJump = emitJump(OpCode::Jump);
-   const size_t callJmp = chunk->bytecode.size();
-   functionIdxMap.emplace(name, callJmp);
-   block(TokenType::Endprocedure);
-   endScope();
-   emit(OpCode::EndFunction);
-   patchJump(normalJump);
-   advance();
+    consume(TokenType::Identifier, "Expected Identifier after PROCEDURE");
+    const string name = get<string>(currentToken.literal);
+    // consume(TokenType::Lparen, "Expected (");
+    // consume(TokenType::Rparen, "Expected )");
+    consume(TokenType::Newline, "Expected newline after Identifier");
+    advance();
+    beginScope();
+    const size_t normalJump = emitJump(OpCode::Jump);
+    const size_t callJmp = chunk->bytecode.size();
+    functionIdxMap.emplace(name, callJmp);
+    block(TokenType::Endprocedure);
+    endScope();
+    emit(OpCode::EndFunction);
+    patchJump(normalJump);
+    advance();
 }
 
 void Compiler::parseCallStatement() {
     consume(TokenType::Identifier, "Expected Identifier after CALL");
     const string name = get<string>(currentToken.literal);
-    //consume(TokenType::Lparen, "Expected ( after Identifier");
-    //consume(TokenType::Rparen, "Expected ) after args");
+    // consume(TokenType::Lparen, "Expected ( after Identifier");
+    // consume(TokenType::Rparen, "Expected ) after args");
     const auto it = functionIdxMap.find(name);
     if (it == functionIdxMap.end()) {
-        Error.report(currentToken, "Compiler", "Function / Procedure is undefined");
+        Error.report(currentToken, "Compiler",
+                     "Function / Procedure is undefined");
     }
     auto idx = static_cast<i64>(it->second);
     emitCall(std::move(idx));
@@ -213,7 +303,9 @@ void Compiler::parseCallStatement() {
 
 std::unique_ptr<Chunk> Compiler::compile(string &input) {
     initCompiler(input);
-    while (peekToken.type != TokenType::Eof) { program(); }
+    while (peekToken.type != TokenType::Eof) {
+        program();
+    }
     emit(OpCode::Return);
     return std::move(chunk);
 }
@@ -222,39 +314,41 @@ void Compiler::advance() {
     if (TokenList[idx]->type != TokenType::Eof && idx < TokenList.size()) {
         currentToken = peekToken;
         peekToken = *TokenList[++idx];
-   }
-   return;
+    }
+    return;
 }
-
 
 void Compiler::retreat() {
     if (idx > 2) {
         peekToken = currentToken;
-        currentToken = *TokenList[--idx]; }
-   return;
+        currentToken = *TokenList[--idx];
+    }
+    return;
 }
 
 TokenType Compiler::getArrayDeclarationType() {
-    while (currentToken.type != TokenType::Rsqrbracket ||  peekToken.type != TokenType::Of) advance();
+    while (currentToken.type != TokenType::Rsqrbracket ||
+           peekToken.type != TokenType::Of)
+        advance();
     advance();
     TokenType arrayType = peekToken.type;
-    while (currentToken.type != TokenType::Lsqrbracket) retreat();
+    while (currentToken.type != TokenType::Lsqrbracket)
+        retreat();
     return arrayType;
 }
-
 
 void Compiler::expressionStatement() {
     if (match(TokenType::Output)) {
         printStatement();
     } else if (match(TokenType::Declare)) {
         parseDeclareStatement();
-    } else if (currentToken.type == TokenType::Identifier && (peekToken.type == TokenType::Assignment || peekToken.type == TokenType::Lsqrbracket)) {
+    } else if (currentToken.type == TokenType::Identifier &&
+               (peekToken.type == TokenType::Assignment ||
+                peekToken.type == TokenType::Lsqrbracket)) {
         parseAssignmentStatement();
-    }
-    else if (currentToken.type == TokenType::Newline){
+    } else if (currentToken.type == TokenType::Newline) {
         advance();
-    }
-    else if (currentToken.type == TokenType::Input) {
+    } else if (currentToken.type == TokenType::Input) {
         parseInputStatement();
 
     } else {
@@ -274,7 +368,9 @@ void Compiler::parseAssignmentStatement() {
     } else if (checkLocalExists()) {
         opSet = isArray ? OpCode::SetLocalArray : OpCode::SetLocal;
     } else {
-        Error.report(currentToken, "Compile", "Variable " + get<string>(identifier.literal) +  " not declared in this scope");
+        Error.report(currentToken, "Compile",
+                     "Variable " + get<string>(identifier.literal) +
+                         " not declared in this scope");
     }
     if (!isArray) {
         value();
@@ -302,9 +398,7 @@ void Compiler::parseForAssignmentStatement(Token iterator) {
     emit(opSet);
 }
 
-void Compiler::beginScope() {
-    ++scopeDepth;
-}
+void Compiler::beginScope() { ++scopeDepth; }
 
 void Compiler::block(TokenType type) {
     while (peekToken.type != TokenType::Eof && peekToken.type != type) {
@@ -314,11 +408,13 @@ void Compiler::block(TokenType type) {
 }
 
 void Compiler::block(TokenType type, TokenType endBlock2) {
-    while (peekToken.type != TokenType::Eof && peekToken.type != type && peekToken.type != endBlock2) {
+    while (peekToken.type != TokenType::Eof && peekToken.type != type &&
+           peekToken.type != endBlock2) {
         program();
     }
-    peekToken.type == type ? consume(type, "Unexpected end of scope, expected Endif") :
-        consume(endBlock2, "Unexpected end of scope Else");
+    peekToken.type == type
+        ? consume(type, "Unexpected end of scope, expected Endif")
+        : consume(endBlock2, "Unexpected end of scope Else");
 }
 
 size_t Compiler::emitJump(OpCode opCode) {
@@ -332,7 +428,8 @@ void Compiler::patchJump(size_t offset) {
         Error.report(currentToken, "Stack overflow", "Jump block too large");
     }
     chunk->patch(offset - 1, static_cast<std::byte>(distance));
-    chunkPosition.push_back(std::make_pair(currentToken.line, currentToken.column));
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
 }
 
 void Compiler::parseIfStatement() {
@@ -358,32 +455,32 @@ void Compiler::parseIfStatement() {
 
 void Compiler::program() {
     switch (currentToken.type) {
-        case TokenType::System:
-            parseSystemStatement();
-            break;
-        case TokenType::Function:
-            return;
-        case TokenType::Call:
-            parseCallStatement();
-            break;
-        case TokenType::Procedure:
-            parseProcedureStatement();
-            break;
-        case TokenType::Repeat:
-            parseRepeatLoopStatement();
-            break;
-        case TokenType::While:
-            parseWhileLoopStatement();
-            return;
-        case TokenType::For:
-            parseForLoopStatement();
-            return;
-        case TokenType::If:
-            parseIfStatement();
-            break;
-        default:
-            expressionStatement();
-            break;
+    case TokenType::System:
+        parseSystemStatement();
+        break;
+    case TokenType::Function:
+        return;
+    case TokenType::Call:
+        parseCallStatement();
+        break;
+    case TokenType::Procedure:
+        parseProcedureStatement();
+        break;
+    case TokenType::Repeat:
+        parseRepeatLoopStatement();
+        break;
+    case TokenType::While:
+        parseWhileLoopStatement();
+        return;
+    case TokenType::For:
+        parseForLoopStatement();
+        return;
+    case TokenType::If:
+        parseIfStatement();
+        break;
+    default:
+        expressionStatement();
+        break;
     }
 }
 
@@ -417,7 +514,8 @@ void Compiler::parseInputStatement(void) {
     } else if (checkLocalExists()) {
         opSet = OpCode::SetLocal;
     } else {
-        Error.report(currentToken, "Compiler", "Identifier after Input is undefined");
+        Error.report(currentToken, "Compiler",
+                     "Identifier after Input is undefined");
     }
     emitConstant(std::move(currentToken.literal));
     emit(OpCode::Input);
@@ -432,15 +530,17 @@ void Compiler::value() {
 
 bool Compiler::checkLocalExists() {
     for (auto identifier : identifiers) {
-        if (identifier.name == get<string>(currentToken.literal) && identifier.depth <= scopeDepth) {
+        if (identifier.name == get<string>(currentToken.literal) &&
+            identifier.depth <= scopeDepth) {
             return true;
         }
     }
     return false;
 }
 bool Compiler::checkGlobalExists() {
-    for (auto identifier : identifiers){
-        if (identifier.name == get<string>(currentToken.literal) && identifier.depth == 0) {
+    for (auto identifier : identifiers) {
+        if (identifier.name == get<string>(currentToken.literal) &&
+            identifier.depth == 0) {
             return true;
         }
     }
@@ -448,7 +548,8 @@ bool Compiler::checkGlobalExists() {
 }
 
 void Compiler::parseArrayIdentifier(bool isArray) {
-    if (!isArray) return;
+    if (!isArray)
+        return;
     consume(TokenType::Lsqrbracket, "Expected [ after array identifier");
     advance();
     expression();
@@ -457,21 +558,21 @@ void Compiler::parseArrayIdentifier(bool isArray) {
         return;
     } else {
         throw std::runtime_error("Can't :()");
-
     }
-
 }
 
 void Compiler::resolver() {
     OpCode opGet;
-    bool isArrayt =  peekToken.type == TokenType::Lsqrbracket;
+    bool isArrayt = peekToken.type == TokenType::Lsqrbracket;
     auto identifier = currentToken;
     if (checkGlobalExists()) {
         opGet = isArrayt ? OpCode::GetGlobalArray : OpCode::GetGlobal;
     } else if (checkLocalExists()) {
-        opGet = isArrayt ? OpCode::GetLocalArray  : OpCode::GetLocal;
+        opGet = isArrayt ? OpCode::GetLocalArray : OpCode::GetLocal;
     } else {
-        Error.report(currentToken, "Compile", "Variable " + get<string>(currentToken.literal) + " not declared in this scope");
+        Error.report(currentToken, "Compile",
+                     "Variable " + get<string>(currentToken.literal) +
+                         " not declared in this scope");
     }
 
     if (!isArrayt) {
@@ -490,52 +591,55 @@ void Compiler::unary() {
     advance();
     parsePrecedence(Precedence::Unary);
     switch (op.type) {
-        case TokenType::Minus:
-            emit(OpCode::Negate); break;
-        case TokenType::Not:
-            emit(OpCode::Not); break;
+    case TokenType::Minus:
+        emit(OpCode::Negate);
+        break;
+    case TokenType::Not:
+        emit(OpCode::Not);
+        break;
 
-        case TokenType::Sin:
-            emitConstant(builtintype::Sin);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Cos:
-            emitConstant(builtintype::Cos);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Tan:
-            emitConstant(builtintype::Tan);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Abs:
-            emitConstant(builtintype::Abs);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Sqrt:
-            emitConstant(builtintype::Sqrt);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::IntCast:
-            emitConstant(builtintype::IntegerCast);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::RealCast:
-            emitConstant(builtintype::RealCast);
-            emit(OpCode::Builtin);
-            break;
-         case TokenType::StringCast:
-            emitConstant(builtintype::StringCast);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Reverse:
-            emitConstant(builtintype::Reverse);
-            emit(OpCode::Builtin);
-            break;
-        case TokenType::Length:
-            emitConstant(builtintype::Length);
-            emit(OpCode::Builtin);
-            break;
-       default: return;
+    case TokenType::Sin:
+        emitConstant(builtintype::Sin);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Cos:
+        emitConstant(builtintype::Cos);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Tan:
+        emitConstant(builtintype::Tan);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Abs:
+        emitConstant(builtintype::Abs);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Sqrt:
+        emitConstant(builtintype::Sqrt);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::IntCast:
+        emitConstant(builtintype::IntegerCast);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::RealCast:
+        emitConstant(builtintype::RealCast);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::StringCast:
+        emitConstant(builtintype::StringCast);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Reverse:
+        emitConstant(builtintype::Reverse);
+        emit(OpCode::Builtin);
+        break;
+    case TokenType::Length:
+        emitConstant(builtintype::Length);
+        emit(OpCode::Builtin);
+        break;
+    default:
+        return;
     }
 }
 
@@ -545,22 +649,53 @@ void Compiler::binary() {
     advance();
     parsePrecedence(pr);
     switch (tok.type) {
-        case TokenType::Not_equals:    emit(OpCode::NotEqual); break;
-        case TokenType::Equals:        emit(OpCode::Equal); break;
-        case TokenType::Greater:       emit(OpCode::Greater); break;
-        case TokenType::Lesser:        emit(OpCode::Lesser); break;
-        case TokenType::Greater_equal: emit(OpCode::GreaterEqual); break;
-        case TokenType::Lesser_equal:  emit(OpCode::LesserEqual); break;
-        case TokenType::Plus:          emit(OpCode::Add); break;
-        case TokenType::Minus:         emit(OpCode::Subtract); break;
-        case TokenType::Star:          emit(OpCode::Multiply); break;
-        case TokenType::Slash:         emit(OpCode::Divide); break;
-        case TokenType::Mod:           emit(OpCode::Mod); break;
-        case TokenType::Div:           emit(OpCode::Div); break;
-        case TokenType::Ampersand:     emit(OpCode::Concatenate); break;
-        case TokenType::And:           emit(OpCode::And); break;
-        case TokenType::Or:            emit(OpCode::Or); break;
-        default: return;
+    case TokenType::Not_equals:
+        emit(OpCode::NotEqual);
+        break;
+    case TokenType::Equals:
+        emit(OpCode::Equal);
+        break;
+    case TokenType::Greater:
+        emit(OpCode::Greater);
+        break;
+    case TokenType::Lesser:
+        emit(OpCode::Lesser);
+        break;
+    case TokenType::Greater_equal:
+        emit(OpCode::GreaterEqual);
+        break;
+    case TokenType::Lesser_equal:
+        emit(OpCode::LesserEqual);
+        break;
+    case TokenType::Plus:
+        emit(OpCode::Add);
+        break;
+    case TokenType::Minus:
+        emit(OpCode::Subtract);
+        break;
+    case TokenType::Star:
+        emit(OpCode::Multiply);
+        break;
+    case TokenType::Slash:
+        emit(OpCode::Divide);
+        break;
+    case TokenType::Mod:
+        emit(OpCode::Mod);
+        break;
+    case TokenType::Div:
+        emit(OpCode::Div);
+        break;
+    case TokenType::Ampersand:
+        emit(OpCode::Concatenate);
+        break;
+    case TokenType::And:
+        emit(OpCode::And);
+        break;
+    case TokenType::Or:
+        emit(OpCode::Or);
+        break;
+    default:
+        return;
     }
 }
 
@@ -587,7 +722,8 @@ void Compiler::grouping() {
 }
 
 void Compiler::parsePrecedence(Precedence precedence) {
-    if (lookupUnary(currentToken.type)) return;
+    if (lookupUnary(currentToken.type))
+        return;
     while (precedence <= lookupPrecedence(peekToken.type)) {
         advance();
         lookupBinary(currentToken.type);
@@ -599,70 +735,94 @@ void Compiler::parseDeclareStatement() {
     while (true) {
         if (currentToken.type != TokenType::Identifier) {
             std::stringstream ss;
-            ss << "Expected identifier instead of '" << currentToken.literal << "'";
+            ss << "Expected identifier instead of '" << currentToken.literal
+               << "'";
             Error.report(currentToken, "Compile", ss.str());
         }
         declareIdentifiers.emplace_back(currentToken);
         advance();
-        if (currentToken.type == TokenType::Comma) advance();
-        else break;
+        if (currentToken.type == TokenType::Comma)
+            advance();
+        else
+            break;
     }
     if (currentToken.type != TokenType::Colon) {
         Error.report(currentToken, "Compile", "Expected Colon (:)");
     }
     advance();
     switch (currentToken.type) {
-        case TokenType::Integer_t:  declareVariables(declareIdentifiers, TokenType::Integer, true, false); break;
-        case TokenType::String_t:   declareVariables(declareIdentifiers, TokenType::String, true, false); break;
-        case TokenType::Boolean_t:  declareVariables(declareIdentifiers, TokenType::Boolean, true, false); break;
-        case TokenType::Real_t:     declareVariables(declareIdentifiers, TokenType::Real, true, false); break;
-        case TokenType::Char_t:     declareVariables(declareIdentifiers, TokenType::Char, true, false); break;
-        case TokenType::Array:  {
-            consume(TokenType::Lsqrbracket, "Expected [ after ARRAY");
-            TokenType arrayType = getArrayDeclarationType();
-            advance();
-            expression();
-            consume(TokenType::Colon, "Expected : after expression");
-            advance();
-            expression();
-            consume(TokenType::Rsqrbracket, "Expected ] after expression");
-            consume(TokenType::Of, "Expected OF after ]");
-            advance();
-            switch (arrayType) {
-                // single variable declaration for the time being;
-                case TokenType::Integer_t:
-                    declareVariables(declareIdentifiers, TokenType::Integer, true, true); break;
-                case TokenType::String_t:
-                    declareVariables(declareIdentifiers, TokenType::String, true, true); break;
-                case TokenType::Boolean_t:
-                    declareVariables(declareIdentifiers, TokenType::Boolean, true, true); break;
-                case TokenType::Real_t:
-                    declareVariables(declareIdentifiers, TokenType::Real, true, true); break;
-                case TokenType::Char_t:
-                    declareVariables(declareIdentifiers, TokenType::Char, true, true); break;
-                default: Error.report(currentToken, "Compile", "Unexpected type in array declaration");
-            }
+    case TokenType::Integer_t:
+        declareVariables(declareIdentifiers, TokenType::Integer, true, false);
+        break;
+    case TokenType::String_t:
+        declareVariables(declareIdentifiers, TokenType::String, true, false);
+        break;
+    case TokenType::Boolean_t:
+        declareVariables(declareIdentifiers, TokenType::Boolean, true, false);
+        break;
+    case TokenType::Real_t:
+        declareVariables(declareIdentifiers, TokenType::Real, true, false);
+        break;
+    case TokenType::Char_t:
+        declareVariables(declareIdentifiers, TokenType::Char, true, false);
+        break;
+    case TokenType::Array: {
+        consume(TokenType::Lsqrbracket, "Expected [ after ARRAY");
+        TokenType arrayType = getArrayDeclarationType();
+        advance();
+        expression();
+        consume(TokenType::Colon, "Expected : after expression");
+        advance();
+        expression();
+        consume(TokenType::Rsqrbracket, "Expected ] after expression");
+        consume(TokenType::Of, "Expected OF after ]");
+        advance();
+        switch (arrayType) {
+        // single variable declaration for the time being;
+        case TokenType::Integer_t:
+            declareVariables(declareIdentifiers, TokenType::Integer, true,
+                             true);
             break;
+        case TokenType::String_t:
+            declareVariables(declareIdentifiers, TokenType::String, true, true);
+            break;
+        case TokenType::Boolean_t:
+            declareVariables(declareIdentifiers, TokenType::Boolean, true,
+                             true);
+            break;
+        case TokenType::Real_t:
+            declareVariables(declareIdentifiers, TokenType::Real, true, true);
+            break;
+        case TokenType::Char_t:
+            declareVariables(declareIdentifiers, TokenType::Char, true, true);
+            break;
+        default:
+            Error.report(currentToken, "Compile",
+                         "Unexpected type in array declaration");
         }
-        default: Error.report(currentToken, "Compile", "Unexpected Type");
+        break;
+    }
+    default:
+        Error.report(currentToken, "Compile", "Unexpected Type");
     }
 }
 
-
-void Compiler::declareVariables(std::vector<Token> declareIdentifiers, TokenType type, bool newline, bool isArray) {
+void Compiler::declareVariables(std::vector<Token> declareIdentifiers,
+                                TokenType type, bool newline, bool isArray) {
     for (auto declareIdentifier : declareIdentifiers) {
-       string identifierName = get<string>(declareIdentifier.literal);
-       Identifier newidentifier = Identifier(identifierName, scopeDepth);
-       scopeDepth == 0 ? globalsType[identifierName] = type : localsType[identifierName] = type;
-       identifiers.emplace_back(newidentifier);
-       emitConstant(std::move(declareIdentifier.literal));
-       if (!isArray) {
-           scopeDepth == 0 ? emit(OpCode::DefineGlobal) :
-               emit(OpCode::DefineLocal);
-       } else {
-           scopeDepth == 0 ? emit(OpCode::DefineGlobalArray) :
-               emit(OpCode::DefineLocalArray);
-       }
+        string identifierName = get<string>(declareIdentifier.literal);
+        Identifier newidentifier = Identifier(identifierName, scopeDepth);
+        scopeDepth == 0 ? globalsType[identifierName] = type
+                        : localsType[identifierName] = type;
+        identifiers.emplace_back(newidentifier);
+        emitConstant(std::move(declareIdentifier.literal));
+        if (!isArray) {
+            scopeDepth == 0 ? emit(OpCode::DefineGlobal)
+                            : emit(OpCode::DefineLocal);
+        } else {
+            scopeDepth == 0 ? emit(OpCode::DefineGlobalArray)
+                            : emit(OpCode::DefineLocalArray);
+        }
     }
     if (newline) {
         consume(TokenType::Newline, "Unexpected end of declareStatement");
@@ -676,13 +836,12 @@ void Compiler::emitLoop(size_t jump) {
         Error.report(currentToken, "Stack overflow", "Loop body too large");
     }
     chunk->writeByte(static_cast<std::byte>(offset));
-
 }
 
 void Compiler::parseForLoopStatement() {
     advance();
     Value i1 = currentToken.literal;
-    auto i3  = currentToken;
+    auto i3 = currentToken;
     auto opGet = scopeDepth == 0 ? OpCode::GetGlobal : OpCode::GetLocal;
     auto opSet = scopeDepth == 0 ? OpCode::SetGlobal : OpCode::SetLocal;
     parseForAssignmentStatement(i3);
@@ -734,7 +893,6 @@ void Compiler::parseWhileLoopStatement() {
     emitPop();
     advance();
 }
-
 
 const std::unordered_map<TokenType, Precedence> Compiler::precedenceMap = {
     {TokenType::Integer, Precedence::None},
@@ -796,7 +954,5 @@ const std::unordered_map<TokenType, Precedence> Compiler::precedenceMap = {
     {TokenType::To, Precedence::Newline},
     {TokenType::Of, Precedence::Newline},
     {TokenType::Do, Precedence::Newline},
-    {TokenType::Then,    Precedence::Newline},
-    {TokenType::Eof, Precedence::Newline}
-};
-
+    {TokenType::Then, Precedence::Newline},
+    {TokenType::Eof, Precedence::Newline}};

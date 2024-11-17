@@ -1,0 +1,82 @@
+declare k, x, y, o, N : integer
+declare i, j : real
+declare iloop, jloop, kloop : integer
+declare sini, cosj, sina, sinj, cosa, cosj2, mess, cosi, cosb, sinb, t, A, B : real
+declare ascii_string, outstr : string
+declare b : array[1:1760] of char
+declare z : array[1:1760] of real
+
+ascii_string <- ".,-~:;=!*#$@"
+A <- 0.0
+B <- 0.0
+i <- 0.0
+j <- 0.0
+
+procedure init
+    declare tmp : integer
+    for tmp <- 1 to 1760
+        b[i] <- ' '
+        z[i] <- 0
+    next i
+endprocedure
+
+procedure assignment_of_floats
+    sini <- sin i
+    cosj <- cos j
+    sina <- sin A
+    sinj <- sin j
+    cosa <- cos A
+    cosj2 <- cosj + 2
+    mess = 1/(sini * cosj2 * sina + sinj * cosa + 5)
+    cosi <- cos i
+    cosb <- cos B
+    sinb <- sin B
+    t <- sini * cosj2 * cosa - sinj * sina
+endprocedure
+
+procedure assignment_of_ints
+    x <- integer_cast(40 + 30 * mess * (cosi * cosj2 * cosb - t * sinb))
+    y <- integer_cast(12 + 15 * mess * (cosi * cosj2 * sinb + t * cosb))
+    o <- integer_cast(x + 80 * y)
+    N <- integer_cast(8 * ((sinj * sina - sini * cosj * cosa) * cosb - sini * cosj * sina - sinj * cosa - cosi * cosj * sinb))
+endprocedure
+
+procedure assignment_of_zb
+    if (22 > y) and (y > 0) and (x > 0) and (x < 80) and (mess > z[0]) then
+        z[o] <- mess
+        if N > 0 then
+            b[0] <- mid(ascii_string, N, 1)
+        else
+            b[0] <- mid(ascii_string, 0, 1)
+        endif
+    endif
+endprocedure
+
+while true do
+    while j < 6.28 do
+        while i < 6.28 do
+            call init
+            call assignment_of_floats
+            call assignment_of_ints
+            call assignment_of_zb
+            i <- i + 0.02
+        endwhile
+        j <- j + 0.07
+    endwhile
+    outstr <- ""
+    for kloop <- 1 to 1762
+        if kloop mod 80 = 0 then
+            outstr <- outstr & "\n"
+        else
+            outstr <- outstr & b[k]
+        endif
+    next kloop
+    output outstr
+    A <- A + 0.04
+    B <- B + 0.02
+endwhile
+
+
+
+
+
