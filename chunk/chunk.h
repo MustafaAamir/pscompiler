@@ -86,10 +86,22 @@ class Chunk {
         std::vector<Value> constantPool {};
         std::vector<std::byte> bytecode {};
         std::byte read(size_t offset) const { return bytecode[offset]; }
+        uint16_t readU16(size_t offset) const {
+            const auto high = static_cast<uint16_t>(bytecode[offset]);
+            const auto low = static_cast<uint16_t>(bytecode[offset + 1]);
+            return static_cast<uint16_t>(((high << 8) & 0xff00) | (low & 0xff));
+        }
         void writeByte(std::byte byte) { bytecode.push_back(byte); }
+        void writeU16(uint16_t value) {
+            writeByte(static_cast<std::byte>((value >> 8) & 0xff));
+            writeByte(static_cast<std::byte>(value & 0xff));
+        }
         void writeChunk(OpCode opCode);
         void patch(size_t offset, std::byte byte) { bytecode[offset] = byte; }
+        void patchU16(size_t offset, uint16_t value) {
+            patch(offset, static_cast<std::byte>((value >> 8) & 0xff));
+            patch(offset + 1, static_cast<std::byte>(value & 0xff));
+        }
         Value getConstant(size_t idx) { return constantPool[idx]; } //modified
         size_t addConstant(Value &&value); // modified
 };
-

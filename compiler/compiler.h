@@ -42,6 +42,7 @@ class Compiler {
         void parseRandomStatement(bool isreal);
         void andJump();
         void beginScope();
+        void emitU16(uint16_t value);
         size_t emitJump(OpCode opCode);
         void   emitLoop(size_t jump);
         void patchJump(size_t offset);
@@ -118,6 +119,5 @@ class Compiler {
         std::unique_ptr<Chunk> compile(std::string &input);
         void initCompiler(std::string &input);
 };
-
 
 

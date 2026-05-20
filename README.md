@@ -156,5 +156,4 @@ Output: 0.909297
 - Project architecture needs refactoring. ErrorReporter should be a seperate global entity to ensure configurability, i.e. enabling logging or lowercase lexing via command-line arguments.
 
 # Todo
-- Increase jumpsize to uint16_t max
 - render donut.pse

@@ -329,17 +329,16 @@ void VirtualMachine::run() {
             break;
         }
         case (OpCode::Constant): {
-            const auto idx = static_cast<uint16_t>(chunk->read(offset++));
-            const auto idx1 = static_cast<uint16_t>(chunk->read(offset++));
+            const auto idx = chunk->readU16(offset);
+            offset += 2;
             valueStack.push_back(
-                chunk->getConstant(((idx << 8) & 0xff00) | (idx1 & 0xff)));
+                chunk->getConstant(idx));
             break;
         }
         case (OpCode::Call): {
-            const auto idx = static_cast<uint16_t>(chunk->read(offset++));
-            const auto idx1 = static_cast<uint16_t>(chunk->read(offset++));
-            const auto nidx =
-                chunk->getConstant(((idx << 8) & 0xff00) | (idx1 & 0xff));
+            const auto idx = chunk->readU16(offset);
+            offset += 2;
+            const auto nidx = chunk->getConstant(idx);
 
             reg.push_back(offset);
             offset = get<i64>(nidx);
@@ -849,19 +848,22 @@ void VirtualMachine::run() {
             break;
         }
         case (OpCode::Jump): {
-            const auto distance = static_cast<size_t>(chunk->read(offset++));
+            const auto distance = static_cast<size_t>(chunk->readU16(offset));
+            offset += 2;
             offset += distance;
             break;
         }
         case (OpCode::JumpNE): {
-            const auto distance = static_cast<size_t>(chunk->read(offset++));
+            const auto distance = static_cast<size_t>(chunk->readU16(offset));
+            offset += 2;
             if (get<bool>(valueStack.back()) == false) {
                 offset += distance;
             }
             break;
         }
         case (OpCode::Loop): {
-            const auto distance = static_cast<size_t>(chunk->read(offset++));
+            const auto distance = static_cast<size_t>(chunk->readU16(offset));
+            offset += 2;
             offset -= distance;
             break;
         }

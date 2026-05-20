@@ -213,16 +213,23 @@ void Compiler::emit(OpCode opCode, std::optional<std::byte> argument) {
     }
 }
 
+void Compiler::emitU16(uint16_t value) {
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
+    chunk->writeByte(static_cast<std::byte>((value >> 8) & 0xff));
+    chunkPosition.push_back(
+        std::make_pair(currentToken.line, currentToken.column));
+    chunk->writeByte(static_cast<std::byte>(value & 0xff));
+}
+
 void Compiler::emitConstant(Value &&value) {
     auto idx = static_cast<uint16_t>(chunk->addConstant(std::move(value)));
     if (idx > std::numeric_limits<uint16_t>::max()) {
         Error.report(currentToken, "Stack overflow",
                      "too many constants in one chunk");
     }
-    emit(OpCode::Constant, static_cast<std::byte>((idx >> 8) & 0xff));
-    chunkPosition.push_back(
-        std::make_pair(currentToken.line, currentToken.column));
-    chunk->writeByte(static_cast<std::byte>(idx & 0xff));
+    emit(OpCode::Constant);
+    emitU16(idx);
 }
 
 void Compiler::emitCall(i64 &&idx) {
@@ -232,10 +239,8 @@ void Compiler::emitCall(i64 &&idx) {
         Error.report(currentToken, "Stack overflow",
                      "too many constants in one chunk");
     }
-    emit(OpCode::Call, static_cast<std::byte>((index >> 8) & 0xff));
-    chunkPosition.push_back(
-        std::make_pair(currentToken.line, currentToken.column));
-    chunk->writeByte(static_cast<std::byte>(index & 0xff));
+    emit(OpCode::Call);
+    emitU16(index);
 }
 
 void Compiler::emitPop() { emit(OpCode::Pop); }
@@ -418,16 +423,18 @@ void Compiler::block(TokenType type, TokenType endBlock2) {
 }
 
 size_t Compiler::emitJump(OpCode opCode) {
-    emit(opCode, std::byte(0xff));
+    emit(opCode);
+    emitU16(0xffff);
     return chunk->bytecode.size();
 }
 
 void Compiler::patchJump(size_t offset) {
     const auto distance = chunk->bytecode.size() - offset;
-    if (distance > std::numeric_limits<unsigned char>::max()) {
-        Error.report(currentToken, "Stack overflow", "Jump block too large");
+    if (distance > std::numeric_limits<uint16_t>::max()) {
+        Error.report(currentToken, "Stack overflow",
+                     "Jump block too large");
     }
-    chunk->patch(offset - 1, static_cast<std::byte>(distance));
+    chunk->patchU16(offset - 2, static_cast<uint16_t>(distance));
     chunkPosition.push_back(
         std::make_pair(currentToken.line, currentToken.column));
 }
@@ -831,11 +838,11 @@ void Compiler::declareVariables(std::vector<Token> declareIdentifiers,
 
 void Compiler::emitLoop(size_t jump) {
     emit(OpCode::Loop);
-    size_t offset = chunk->bytecode.size() - jump + 1;
-    if (offset > std::numeric_limits<unsigned char>::max()) {
+    const size_t distance = chunk->bytecode.size() + 2 - jump;
+    if (distance > std::numeric_limits<uint16_t>::max()) {
         Error.report(currentToken, "Stack overflow", "Loop body too large");
     }
-    chunk->writeByte(static_cast<std::byte>(offset));
+    emitU16(static_cast<uint16_t>(distance));
 }
 
 void Compiler::parseForLoopStatement() {

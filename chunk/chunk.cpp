@@ -31,9 +31,8 @@ void Chunk::disassembleInstruction() {
     }
     switch (it->first) {
         case (OpCode::Constant): {
-            const auto idx = static_cast<uint16_t>(read(offset++));
-            const auto idx1 = static_cast<uint16_t>(read(offset++));
-            const auto newidx = static_cast<size_t>((idx << 8) & 0xff00) | (idx1 & 0xff);
+            const auto newidx = static_cast<size_t>(readU16(offset));
+            offset += 2;
             const auto value = getConstant(newidx);
             if (const auto string = std::get_if<std::string>(&value)) {
                 std::cout << Modifier(AnsiCode::FG_BMAGENTA);
@@ -60,25 +59,26 @@ void Chunk::disassembleInstruction() {
             break;
                 }
         case (OpCode::Call): {
-            const auto idx = static_cast<uint16_t>(read(offset++));
-            const auto idx1 = static_cast<uint16_t>(read(offset++));
-            const auto newidx = static_cast<size_t>((idx << 8) & 0xff00) | (idx1 & 0xff);
+            const auto newidx = static_cast<size_t>(readU16(offset));
+            offset += 2;
             const auto value = getConstant(newidx);
             cout << "Call jmpdst " << value << " to "<< (offset - get<i64>(value)) << " from " << offset << endl;
             break;
                 }
         case (OpCode::Jump):
         case (OpCode::JumpNE): {
-            const auto distance = static_cast<size_t>(read(offset++));
+            const auto distance = static_cast<size_t>(readU16(offset));
+            offset += 2;
             std::cout << Modifier(AnsiCode::FG_BBLUE);
-            printf("%s distance %02zx  -> to %02zx\n", it->second.c_str(), distance, offset + distance);
+            printf("%s distance %04zx  -> to %04zx\n", it->second.c_str(), distance, offset + distance);
             std::cout << Modifier(AnsiCode::FG_DEFAULT);
             break;
         }
         case (OpCode::Loop): {
-            const auto distance = static_cast<size_t>(read(offset++));
+            const auto distance = static_cast<size_t>(readU16(offset));
+            offset += 2;
             std::cout << Modifier(AnsiCode::FG_BBLUE);
-            printf("%s %02zx    # ->%02zx\n", it->second.c_str(),  distance, offset - distance);
+            printf("%s %04zx    # ->%04zx\n", it->second.c_str(),  distance, offset - distance);
             std::cout << Modifier(AnsiCode::FG_DEFAULT);
             break;
         }
@@ -90,5 +90,3 @@ void Chunk::disassembleInstruction() {
         }
     }
 }
-
-
